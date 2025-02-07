@@ -1,0 +1,2348 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>특정소방대상물 용도별 필요 소방시설 검색</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .result-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .notes {
+            margin-top: 40px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            display:  none;
+        }
+        .note-tooltip {
+            cursor : pointer;
+            color: blue;
+            text-decoration: underline;
+            font-size: 10px;
+            vertical-align: super;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container my-5">
+        <h1 class="text-center">용도별 필요 소방시설 검색</h1>
+
+        <!-- 선택 메뉴 -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <label for="buildingType" class="form-label">특정소방대상물 용도를 선택하세요:</label>
+                <select id="buildingType" class="form-select">
+                    <option value="" selected>-- 선택 --</option>
+                    <option value="아파트">아파트</option>
+                    <option value="터널">터널</option>
+                    <option value="근린생활시설">근린생활시설</option>
+                    <option value="문화 및 집회시설">문화 및 집회시설</option>
+                    <option value="종교시설">종교시설</option>
+                    <option value="판매시설">판매시설</option>
+                    <option value="운수시설">운수시설</option>
+                    <option value="의료시설">의료시설</option>
+                    <option value="교육연구시설">교육연구시설</option>
+                    <option value="노유자시설">노유자시설</option>
+                    <option value="수련시설">수련시설</option>
+                    <option value="운동시설">운동시설</option>
+                    <option value="업무시설">업무시설</option>
+                    <option value="숙박시설">숙박시설</option>
+                    <option value="위락시설">위락시설</option>
+                    <option value="공장">공장</option>
+                    <option value="창고시설">창고시설</option>
+                    <option value="위험물 저장 및 처리 시설">위험물 저장 및 처리 시설</option>
+                </select>
+
+                <!-- 아파트 옵션 -->
+                <div id="apartOptions" class="mt-3" style="display: none;">
+                    <label for="apartArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="apartArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="apartgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="apartgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="apartbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="apartbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="apartbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="apartbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 근린생활시설 옵션 -->
+                <div id="LFOptions" class="mt-3" style="display: none;">
+                    <label for="LFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="LFArea" class="form-control" placeholder="연면적을 입력하세요">
+                    
+                    <label for="LFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="LFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="LFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="LFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="LFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="LFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                 </div>
+
+                <!-- 문화 및 집회시설 옵션 -->
+                <div id="CFOptions" class="mt-3" style="display: none">
+                    <label for="CFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="CFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="CFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="CFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="CFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="CFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="CFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="CFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div> 
+
+                <!-- 종교시설 옵션 -->
+                <div id="RFOptions" class="mt-3" style="display: none">
+                    <label for="RFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="RFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="RFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="RFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="RFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="RFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="RFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="RFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 터널 옵션 -->
+                <div id="tunnelOptions" class="mt-3" style="display: none;">
+                    <label for="tunnelLength" class="form-label">터널의 길이를 선택하세요:</label>
+                    <select id="tunnelLength" class="form-select">
+                        <option value="" selected>-- 선택 --</option>
+                        <option value="short">0 ≤ 길이 < 500m</option>
+                        <option value="medium">500m ≤ 길이 < 1000m</option>
+                        <option value="long">1000m ≤ 길이</option>
+                    </select>
+
+                    <label for="isSpecialTunnel" class="form-label mt-3">행정안전부령으로 정하는 터널인가요?</label>
+                    <select id="isSpecialTunnel" class="form-select">
+                        <option value="" selected>-- 선택 --</option>
+                        <option value="no">아니요</option>
+                        <option value="yes">예</option>
+                    </select>
+                </div>
+
+                <!-- 판매시설 옵션 -->
+                <div id="SFOptions" class="mt-3" style="display: none">
+                    <label for="SFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="SFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="SFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="SFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="SFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="SFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="SFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="SFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 운수시설 옵션 -->
+                <div id="TFOptions" class="mt-3" style="display: none">
+                    <label for="TFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="TFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="TFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="TFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="TFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="TFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="TFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="TFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+                
+                <!-- 의료시설 옵션 -->
+                <div id="MFOptions" class="mt-3" style="display: none">
+                    <label for="MFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="MFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="MFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="MFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="MFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="MFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="MFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="MFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 교육연구시설 옵션 -->
+                <div id="EFOptions" class="mt-3" style="display: none">
+                    <label for="EFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="EFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="EFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="EFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="EFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="EFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="EFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="EFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 노유자시설 옵션 -->
+                <div id="OFOptions" class="mt-3" style="display: none">
+                    <label for="OFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="OFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="OFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="OFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="OFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="OFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="OFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="OFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 수련시설 옵션 -->
+                <div id="TRFOptions" class="mt-3" style="display: none">
+                    <label for="TRFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="TRFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="TRFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="TRFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="TRFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="TRFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="TRFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="TRFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 운동시설 옵션 -->
+                <div id="SPFOptions" class="mt-3" style="display: none">
+                    <label for="SPFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="SPFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="SPFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="SPFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="SPFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="SPFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="SPFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="SPFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 업무시설 옵션 -->
+                <div id="BFOptions" class="mt-3" style="display: none">
+                    <label for="BFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="BFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="BFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="BFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="BFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="BFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="BFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="BFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 숙박시설 옵션 -->
+                <div id="LDFOptions" class="mt-3" style="display: none">
+                    <label for="LDFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="LDFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="LDFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="LDFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="LDFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="LDFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="LDFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="LDFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 위락시설 옵션 -->
+                <div id="AFOptions" class="mt-3" style="display: none">
+                    <label for="AFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="AFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="AFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="AFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="AFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="AFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="AFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="AFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 공장 옵션 -->
+                <div id="FOptions" class="mt-3" style="display: none">
+                    <label for="FArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="FArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="FgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="FgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="FbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="FbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="FbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="FbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 창고시설 옵션 -->
+                <div id="WOptions" class="mt-3" style="display: none">
+                    <label for="WArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="WArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="WgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="WgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="WbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="WbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="WbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="WbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 위험물 저장 및 처리 시설 옵션 -->
+                <div id="HFOptions" class="mt-3" style="display: none">
+                    <label for="HFArea" class="form-label">연면적 (㎡):</label>
+                    <input type="number" id="HFArea" class="form-control" placeholder="연면적을 입력하세요">
+
+                    <label for="HFgroundFloors" class="form-label mt-3">지상층 층수:</label>
+                    <input type="number" id="HFgroundFloors" class="form-control" placeholder="지상층 층수를 입력하세요">
+
+                    <label for="HFbasementFloors" class="form-label mt-3">지하층 층수:</label>
+                    <input type="number" id="HFbasementFloors" class="form-control" placeholder="지하층 층수를 입력하세요">
+
+                    <label for="HFbasementAreaSum" class="form-label mt-3">지하층 바닥면적 합계 (㎡):</label>
+                    <input type="number" id="HFbasementAreaSum" class="form-control" placeholder="지하층 바닥면적 합계를 입력하세요">
+                </div>
+
+                <!-- 검색 버튼 -->
+                <button class="btn btn-primary mt-3" id="searchButton" type="button">검색</button>
+            </div>
+        </div>
+
+        <!-- 검색 결과 -->
+        <div class="result-container" id="resultContainer">
+            <h5>필요 소방시설:</h5>
+            <ul id="resultList"></ul>
+        </div>
+
+        <!-- 아파트트 참고사항 -->
+        <div class="container notes" id="notesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="notesList"></ul>
+        </div>
+
+        <!-- 근린생활시설 참고사항 -->
+        <div class="LFcontainer notes" id="LFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="LFnotesList"></ul>
+        </div>  
+
+        <!-- 문화 및 집회시설 참고사항 -->
+        <div class="CFcontainer notes" id="CFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="CFnotesList"></ul>
+        </div>
+
+        <!-- 종교시설 참고사항 -->
+        <div class="RFcontainer notes" id="RFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="RFnotesList"></ul>
+        </div>
+
+        <!-- 판매시설 참고사항 -->
+        <div class="SFcontainer notes" id="SFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="SFnotesList"></ul>
+        </div>
+
+        <!-- 운수시설 참고사항 -->
+        <div class="TFcontainer notes" id="TFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="TFnotesList"></ul>
+        </div>
+
+        <!-- 의료시설 참고사항 -->
+        <div class="MFcontainer notes" id="MFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="MFnotesList"></ul>
+        </div>
+
+        <!-- 교육연구시설 참고사항 -->
+        <div class="EFcontainer notes" id="EFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="EFnotesList"></ul>
+        </div>
+
+        <!-- 노유자시설 참고사항 -->
+        <div class="OFcontainer notes" id="OFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="OFnotesList"></ul>
+        </div>
+
+        <!-- 수련시설 참고사항 -->
+        <div class="TRFcontainer notes" id="TRFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="TRFnotesList"></ul>
+        </div>
+        
+        <!-- 운동시설 참고사항 -->
+        <div class="SPFcontainer notes" id="SPFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="SPFnotesList"></ul>
+        </div>
+
+        <!-- 업무시설 참고사항 -->
+        <div class="BFcontainer notes" id="BFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="BFnotesList"></ul>
+        </div>
+
+        <!-- 숙박시설 참고사항 -->
+        <div class="LDFcontainer notes" id="LDFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="LDFnotesList"></ul>
+        </div>
+        
+        <!-- 위락시설 참고사항 -->
+        <div class="AFcontainer notes" id="AFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="AFnotesList"></ul>
+        </div>
+
+        <!-- 공장 참고사항 -->
+        <div class="Fcontainer notes" id="FnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="FnotesList"></ul>
+        </div>
+        
+        <!-- 창고시설 참고사항 -->
+        <div class="Wcontainer notes" id="WnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="WnotesList"></ul>
+        </div>
+
+        <!-- 위험물 저장 및 처리 시설 참고사항 -->
+        <div class="HFcontainer notes" id="HFnotesContainer">
+            <h6>※ 추가 참고사항</h6>
+            <ul id="HFnotesList"></ul>
+        </div>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.getElementById('buildingType').addEventListener('change', () => {
+            const buildingType = document.getElementById('buildingType').value;
+
+            document.getElementById('apartOptions').style.display = (buildingType === '아파트') ? 'block' : 'none';
+            document.getElementById('tunnelOptions').style.display = (buildingType === '터널') ? 'block' : 'none';
+            document.getElementById('LFOptions').style.display = (buildingType === '근린생활시설') ? 'block' : 'none';
+            document.getElementById('CFOptions').style.display = (buildingType === '문화 및 집회시설') ? 'block' : 'none';
+            document.getElementById('RFOptions').style.display = (buildingType === '종교시설') ? 'block' : 'none';
+            document.getElementById('SFOptions').style.display = (buildingType === '판매시설') ? 'block' : 'none';
+            document.getElementById('TFOptions').style.display = (buildingType === '운수시설') ? 'block' : 'none';
+            document.getElementById('MFOptions').style.display = (buildingType === '의료시설') ? 'block' : 'none';
+            document.getElementById('EFOptions').style.display = (buildingType === '교육연구시설') ? 'block' : 'none';
+            document.getElementById('OFOptions').style.display = (buildingType === '노유자시설') ? 'block' : 'none';
+            document.getElementById('TRFOptions').style.display = (buildingType === '수련시설') ? 'block' : 'none';
+            document.getElementById('SPFOptions').style.display = (buildingType === '운동시설') ? 'block' : 'none';
+            document.getElementById('BFOptions').style.display = (buildingType === '업무시설') ? 'block' : 'none';
+            document.getElementById('LDFOptions').style.display = (buildingType === '숙박시설') ? 'block' : 'none';
+            document.getElementById('AFOptions').style.display = (buildingType === '위락시설') ? 'block' : 'none';
+            document.getElementById('FOptions').style.display = (buildingType === '공장') ? 'block' : 'none';
+            document.getElementById('WOptions').style.display = (buildingType === '창고시설') ? 'block' : 'none';
+            document.getElementById('HFOptions').style.display = (buildingType === '위험물 저장 및 처리 시설') ? 'block' : 'none';
+            document.getElementById('resultContainer').style.display = 'none'; // 검색 결과 초기화
+
+            const notesContainer = document.getElementById('notesContainer');
+            notesContainer.style.display = (buildingType === '아파트') ? 'block' : 'none';
+
+            const LFnotesContainer = document.getElementById('LFnotesContainer');
+            LFnotesContainer.style.display = (buildingType === '근린생활시설') ? 'block' : 'none';
+
+            const CFnotesContainer = document.getElementById('CFnotesContainer');
+            CFnotesContainer.style.display = (buildingType === '문화 및 집회시설') ? 'block' : 'none';
+
+            const RFnotesContainer = document.getElementById('RFnotesContainer');
+            RFnotesContainer.style.display = (buildingType === '종교시설') ? 'block' : 'none';
+
+            const SFnotesContainer = document.getElementById('SFnotesContainer');
+            SFnotesContainer.style.display = (buildingType === '판매시설') ? 'block' : 'none';
+            
+            const TFnotesContainer = document.getElementById('TFnotesContainer');
+            TFnotesContainer.style.display = (buildingType === '운수시설') ? 'block' : 'none';
+
+            const MFnotesContainer = document.getElementById('MFnotesContainer');
+            MFnotesContainer.style.display = (buildingType === '의료시설') ? 'block' : 'none';
+
+            const EFnotesContainer = document.getElementById('EFnotesContainer');
+            EFnotesContainer.style.display = (buildingType === '교육연구시설') ? 'block' : 'none';
+
+            const OFnotesContainer = document.getElementById('OFnotesContainer');
+            OFnotesContainer.style.display = (buildingType === '노유자시설') ? 'block' : 'none';
+
+            const TRFnotesContainer = document.getElementById('TRFnotesContainer');
+            TRFnotesContainer.style.display = (buildingType === '수련시설') ? 'block' : 'none';
+
+            const SPFnotesContainer = document.getElementById('SPFnotesContainer');
+            SPFnotesContainer.style.display = (buildingType === '운동시설') ? 'block' : 'none';
+
+            const BFnotesContainer = document.getElementById('BFnotesContainer');
+            BFnotesContainer.style.display = (buildingType === '업무시설') ? 'block' : 'none';
+
+            const LDFnotesContainer = document.getElementById('LDFnotesContainer');
+            LDFnotesContainer.style.display = (buildingType === '숙박시설') ? 'block' : 'none';
+            
+            const AFnotesContainer = document.getElementById('AFnotesContainer');
+            AFnotesContainer.style.display = (buildingType === '위락시설') ? 'block' : 'none';
+
+            const FnotesContainer = document.getElementById('FnotesContainer');
+            FnotesContainer.style.display = (buildingType === '공장') ? 'block' : 'none';
+
+            const WnotesContainer = document.getElementById('WnotesContainer');
+            WnotesContainer.style.display = (buildingType === '창고시설') ? 'block' : 'none';
+
+            const HFnotesContainer = document.getElementById('HFnotesContainer');
+            HFnotesContainer.style.display = (buildingType === '위험물 저장 및 처리 시설') ? 'block' : 'none';
+
+        });
+
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const buildingType = document.getElementById('buildingType').value;
+            const resultContainer = document.getElementById('resultContainer');
+            const resultList = document.getElementById('resultList');
+            resultList.innerHTML = ''; // 결과 초기화
+
+            const notesList = document.getElementById('notesList');
+            notesList.innerHTML = ''; // 아파트 참고사항 초기화
+            notesList.innerHTML +=`
+                <li>물분무등소화설비<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리시설 중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설 및 지하구는 제외한다]은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 건축물의 내부에 설치된 차고·주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택 및 다세대주택은 제외한다.&#10; 5) 특정소방대상물에 설치된 전기실·발전실·변전실(가연성 절연유를 사용하지 않는 변압기·전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은 전선 및 케이블만을 설치한 전기실·발전실 및 변전실은 제외한다)·축전지실·통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적 300㎡ 이상인것[하나의 방화구획 내에 둘 이상의 실이 설치되어 있는 경우에는 이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전자기기에 220V 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[1]</span>:
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>누전경보기: 계약전류용량이 100A를 초과하는 경우 설치<span class="note-tooltip"
+                    title="2-자: 누전경보기는 계약전류용량(같은 건축물에 계약 종류가 다른 전기가 공급되는 경우에는 그중 최대계약전류용량을 말한다)이 100암페어를 초과하는 특정소방대상물(내화구조가 아닌 건축물로서 벽·바닥 또는 반자의 전부나 일부를 불연재료 또는 준불연재료가 아닌 재료에 철망을 넣어 만든 것만 해당한다)에 설치해야한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 터널 및 지하구의 경우에는 그렇지 않다">[2]</span>
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title=" ">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물 공기호흡기 설치.
+                </li>
+                <li>제연설비: 특별피난계단 및 비상용승강기의 승강장 *갓복도형 아파트 제외<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[3]</span> 
+                </li>
+                <li>연결살수설비: 대피시설로 사용하는 지하층 바닥면적의 합계가 700㎡ 이상인 경우 지하층의 모든 층에 설치<span class="note-tooltip"
+                    title="5-다: 연결살수설비를 설치해야 하는 특정소방대상물(지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 5) 지하층(피난층으로 주된 출입구가 도로와 접한 경우는 제외한다)으로서 바닥면적의 합계가 150㎡ 이상인 경우에는 지하층의 모든 층. 다만, 「주택법 시행령」 제46조제1항에 따른 국민주택규모 이하인 아파트등의 지하층(대피시설로사용하는 것만 해당한다)과 교육연구시설 중 학교의 지하층의 경우에는 700㎡이상인 것으로 한다.">[4]</span>
+                </li>`;
+            
+            const LFnotesList = document.getElementById('LFnotesList');
+            LFnotesList.innerHTML = ''; // 근린생활시설 참고사항 초기화
+            LFnotesList.innerHTML +=`
+                <li>간이스프링클러설비:<span class="note-tooltip"
+                    title="1-마: 간이스프링클러설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 근린생활시설 중 다음의 어느 하나에 해당하는 것&#10;  가) 근린생활시설로 사용하는 부분의 바닥면적 합계가 1천㎡ 이상인 것은 모든 층&#10;  나) 의원, 치과의원 및 한의원으로서 입원실 또는 인공신장실이 있는 시설&#10;  다) 조산원 및 산후조리원으로서 연면적 600㎡ 미만인 시설">[참조]</span>
+                    <ol>(1)근린생활시설로 사용하는 부분의 바닥면적 합계가 1000㎡ 이상인 경우 모든 층에 설치</ol>
+                    <ol>(2)의원·치과의원·한의원으로서 입원실이 있는 시설</ol>
+                    <ol>(3)조산원·산후조리원으로서 연면적 600㎡ 미만인 시설</ol>
+                </li>
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설 중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설 및 지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비: 지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상인 것<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>
+                </li>
+                <li>자동화재속보설비:<span class="note-tooltip"
+                    title="2-사: 자동화재속보설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다. 다만, 방재실 등 화재 수신기가 설치된 장소에 24시간화재를 감시할 수 있는 사람이 근무하고 있는 경우에는 자동화재속보설비를 설치하지 않을 수 있다.&#10; 5) 근린생활시설 중 다음의 어느 하나에 해당하는 시설&#10;  가) 의원, 치과의원 및 한의원으로서 입원실이 있는 시설&#10;  나) 조산원 및 산후조리원">[참조]</span>
+                    <ol>(1)의원·치과의원·한의원으로서 입원실이 있는 시설</ol>
+                    <ol>(2)조산원·산후조리원</ol>
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title=" ">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물 공기호흡기 설치.
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분&#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)지하층·무창층의 바닥면적의 합계가 1000㎡ 이상인 경우</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기의 승강장, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const CFnotesList = document.getElementById('CFnotesList');
+            CFnotesList.innerHTML = ''; // 문화집회시설 참고사항 초기화
+            CFnotesList.innerHTML +=`
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우만 설치
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  가) 수용인원 100명 이상인 문화 및 집회시설 중 영화상영관&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>
+                    <ol>(1)수용인원 100명 이상인 영화상영관 공기호흡기 설치.</ol>
+                    <ol>(2)이산화탄소소화설비를 설치해야 하는 특정소방대상물 공기호흡기 설치.</ol>
+                </li>
+                <li>휴대용비상조명등:<span class="note-tooltip"
+                    title="3-마: 휴대용비상조명등을 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 2) 수용인원 100명 이상의 영화상영관, 판매시설 중 대규모점포, 철도 및 도시철도 시설 중 지하역사, 지하상가">[참조]</span>수용인원 100명 이상인 영화상영관(보행거리 50m 이내마다 3개 이상 설치)
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 1) 문화 및 집회시설, 종교시설, 운동시설 중 무대부의 바닥면적이 200㎡ 이상인경우에는 해당 무대부 &#10; 2) 문화 및 집회시설 중 영화상영관으로서 수용인원 100명 이상인 경우에는해당 영화상영관&#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)무대부 바닥면적이 200㎡ 이상인 경우에는 해당 무대부에 설치.</ol>
+                    <ol>(2)수용인원 100명 이상인 영화상영관.</ol>
+                    <ol>(3)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const RFnotesList = document.getElementById('RFnotesList');
+            RFnotesList.innerHTML = ''; // 종교시설 참고사항 초기화
+            RFnotesList.innerHTML +=`
+                 <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우만 설치
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물 공기호흡기 설치.
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 1) 문화 및 집회시설, 종교시설, 운동시설 중 무대부의 바닥면적이 200㎡ 이상인경우에는 해당 무대부 &#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)무대부 바닥면적이 200㎡ 이상인 경우에는 해당 무대부에 설치.</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`; 
+
+            const SFnotesList = document.getElementById('SFnotesList');
+            SFnotesList.innerHTML = ''; // 판매시설 참고사항 초기화
+            SFnotesList.innerHTML +=`
+                <li>자동소화장치:<span class="note-tooltip"
+                    title="1-나: 자동소화장치를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 특정소방대상물 중 후드 및 덕트가 설치되어 있는 주방이 있는 특정소방대상물로 한다. 이 경우 해당 주방에 자동소화장치를 설치해야 한다.&#10; 2) 상업용 주방자동소화장치를 설치해야 하는 것&#10;  가) 판매시설 중 「유통산업발전법」 제2조제3호에 해당하는 대규모점포에입점해 있는 일반음식점">[참조]</span>대규모점포에 입점해 있는 일반음식점의 경우 상업용 주방자동소화장치 설치
+                </li>
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>화재알림설비:<span class="note-tooltip"
+                    title="2-마: 화재알림설비를 설치해야 하는 특정소방대상물은 판매시설 중 전통시장으로한다.">[참조]</span>전통시장인 경우 설치
+                </li>
+                <li>자동화재속보설비:<span class="note-tooltip"
+                    title="2-사: 자동화재속보설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다. 다만, 방재실 등 화재 수신기가 설치된 장소에 24시간화재를 감시할 수 있는 사람이 근무하고 있는 경우에는 자동화재속보설비를 설치하지 않을 수 있다.&#10; 7) 판매시설 중 전통시장">[참조]</span>전통시장인 경우 설치
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우에 설치
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  나) 판매시설 중 대규모점포&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>
+                    <ol>(1)판매시설 중 대규모점포의 경우 공기호흡기 설치</ol>
+                    <ol>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치</ol>
+                </li>
+                <li>휴대용비상조명등:<span class="note-tooltip"
+                    title="3-마: 휴대용비상조명등을 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 2) 수용인원 100명 이상의 영화상영관, 판매시설 중 대규모점포, 철도 및 도시철도 시설 중 지하역사, 지하상가">[참조]</span>판매시설 중 대규모점포의 경우 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분 &#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)지하층·무창층의 바닥면적의 합계가 1000㎡ 이상인 경우</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const TFnotesList = document.getElementById('TFnotesList');
+            TFnotesList.innerHTML = ''; //운수시설 참고사항 초기화
+            TFnotesList.innerHTML +=`
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우에 설치
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  다) 운수시설 중 지하역사&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>
+                    <ol>(1)운수시설 중 지하역사의 경우 공기호흡기 설치</ol>
+                    <ol>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치</ol>
+                </li>
+                <li>휴대용비상조명등:<span class="note-tooltip"
+                    title="3-마: 휴대용비상조명등을 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 2) 수용인원 100명 이상의 영화상영관, 판매시설 중 대규모점포, 철도 및 도시철도 시설 중 지하역사, 지하상가">[참조]</span>철도 및 도시철도 시설 중 지하역사의 경우 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분 &#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)지하층·무창층의 바닥면적의 합계가 1000㎡ 이상인 경우</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const MFnotesList = document.getElementById('MFnotesList');
+            MFnotesList.innerHTML = ''; //의료시설 참고사항 초기화
+            MFnotesList.innerHTML += `
+                <li>간이스프링클러설비:<span class="note-tooltip"
+                    title="1-마: 간이스프링클러설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 3) 의료시설 중 다음의 어느 하나에 해당하는 시설&#10;  가) 종합병원, 병원, 치과병원, 한방병원 및 요양병원(의료재활시설은 제외한다)으로 사용되는 바닥면적의 합계가 600㎡ 미만인 시설&#10;  나) 정신의료기관 또는 의료재활시설로 사용되는 바닥면적의 합계가 300㎡이상 600㎡ 미만인 시설나) 정신의료기관 또는 의료재활시설로 사용되는 바닥면적의 합계가 300㎡이상 600㎡ 미만인 시설&#10;  다) 정신의료기관 또는 의료재활시설로 사용되는 바닥면적의 합계가 300㎡미만이고, 창살(철재ㆍ플라스틱 또는 목재 등으로 사람의 탈출 등을 막기위하여 설치한 것을 말하며, 화재 시 자동으로 열리는 구조로 되어 있는창살은 제외한다)이 설치된 시설">[참조]</span>
+                    <ol>(1)종합병원·병원·치과병원·한방병원·요양병원 바닥면적의 합계가 600㎡ 미만</ol>
+                    <ol>(2)정신의료기관·의료재활시설 바닥면적의 합계가 300㎡ 이상 600㎡ 미만</ol>
+                    <ol>(3)창살이 설치된 정신의료기관·의료재활시설 바닥면적의 합계가 300㎡ 미만</ol>
+                </li>
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>자동화재속보설비:<span class="note-tooltip"
+                    title="2-사: 자동화재속보설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다. 다만, 방재실 등 화재 수신기가 설치된 장소에 24시간화재를 감시할 수 있는 사람이 근무하고 있는 경우에는 자동화재속보설비를 설치하지 않을 수 있다.&#10; 6) 의료시설 중 다음의 어느 하나에 해당하는 것&#10;  가) 종합병원, 병원, 치과병원, 한방병원 및 요양병원(의료재활시설은 제외한다)&#10;  나) 정신병원 및 의료재활시설로 사용되는 바닥면적의 합계가 500㎡ 이상인층이 있는 것">[참조]</span>
+                    <ol>(1)종합병원·병원·치과병원·한방병원 및 요양병원(26.12.31소급유예)</ol>
+                    <ol>(2)정신병원·의료재활시설 바닥면적의 합계가 500㎡ 이상인 층이 있는 경우</ol>
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우에 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분 &#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)지하층·무창층의 바닥면적의 합계가 1000㎡ 이상인 경우</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const EFnotesList = document.getElementById('EFnotesList');
+            EFnotesList.innerHTML = ''; //교육연구시설 참고사항 초기화
+            EFnotesList.innerHTML +=`
+                <li>자동소화장치:<span class="note-tooltip"
+                    title="1-나: 자동소화장치를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 특정소방대상물 중 후드 및 덕트가 설치되어 있는 주방이 있는 특정소방대상물로 한다. 이 경우 해당 주방에 자동소화장치를 설치해야 한다.&#10; 2) 상업용 주방자동소화장치를 설치해야 하는 것&#10;  나) 「식품위생법」 제2조제12호에 따른 집단급식소">[참조]</span>집단급식소에 상업용 주방자동소화장치 설치
+                </li>
+                <li>간이스프링클러설비:<span class="note-tooltip"
+                    title="1-마: 간이스프링클러설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 4) 교육연구시설 내에 합숙소로서 연면적 100㎡ 이상인 경우에는 모든 층">[참조]</span>교육연구시설 내의 연면적 100㎡ 이상의 합숙소의 경우 모든 층에 설치
+                </li>
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>단독경보형 감지기:<span class="note-tooltip"
+                    title="2-가: 단독경보형 감지기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다. 이 경우 5)의 연립주택 및 다세대주택에 설치하는 단독경보형 감지기는 연동형으로 설치해야 한다.&#10; 1) 교육연구시설 내에 있는 기숙사 또는 합숙소로서 연면적 2천㎡ 미만인 것">[참조]</span>연면적 2000㎡ 미만의 기숙사 또는 합숙소  
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장
+                </li>`;
+
+            const OFnotesList = document.getElementById('OFnotesList');
+            OFnotesList.innerHTML = ''; //노유자시설 참고사항 초기화
+            OFnotesList.innerHTML +=`
+                <li>간이스프링클러설비:<span class="note-tooltip"
+                    title="1-마: 간이스s프링클러설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 5) 노유자 시설로서 다음의 어느 하나에 해당하는 시설&#10;  가) 제7조제1항제7호 각 목에 따른 시설[같은 호 가목2) 및 같은 호 나목부터바목까지의 시설 중 단독주택 또는 공동주택에 설치되는 시설은 제외하며, 이하 “노유자 생활시설”이라 한다]&#10;  나) 가)에 해당하지 않는 노유자 시설로 해당 시설로 사용하는 바닥면적의합계가 300㎡ 이상 600㎡ 미만인 시설&#10;  다) 가)에 해당하지 않는 노유자 시설로 해당 시설로 사용하는 바닥면적의합계가 300㎡ 미만이고, 창살(철재ㆍ플라스틱 또는 목재 등으로 사람의 탈출등을 막기 위하여 설치한 것을 말하며, 화재 시 자동으로 열리는 구조로되어 있는 창살은 제외한다)이 설치된 시설">[참조]</span>
+                    <ol>1.노유자 생활시설</ol>
+                    <ol>2.노유자 생활시설이 아닌 노유자 시설 중 바닥면적의 합계가 300㎡ 이상 600㎡ 미만인 시설</ol>
+                    <ol>3.노유자 생활시설이 아닌 노유자 시설 중 바닥면적의 합계가 300㎡ 미만이고, 창살이 설치된 시설</ol>
+                </li>
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우에 설치
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분 &#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)지하층·무창층의 바닥면적의 합계가 1000㎡ 이상인 경우</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const TRFnotesList = document.getElementById('TRFnotesList');
+            TRFnotesList.innerHTML = ''; //수련시설 참고사항 초기화
+            TRFnotesList.innerHTML +=`
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>단독경보형감지기:<span class="note-tooltip"
+                    title="2-가: 가. 단독경보형 감지기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다. 이 경우 5)의 연립주택 및 다세대주택에 설치하는 단독경보형 감지기는 연동형으로 설치해야 한다.&#10; 2) 수련시설 내에 있는 기숙사 또는 합숙소로서 연면적 2천㎡ 미만인 것&#10; 3) 다목7)에 해당하지 않는 수련시설(숙박시설이 있는 것만 해당한다)&#10; 다목7) 6)에 해당하지 않는 노유자 시설로서 연면적 400㎡ 이상인 노유자 시설및숙박시설이 있는 수련시설로서 수용인원 100명 이상인 경우에는 모든 층">[참조]</span>
+                    <ol>(1)연면적 2000㎡ 미만의 수련시설 내의 기숙사 또는 합숙소.</ol>
+                    <ol>(2)수용인원 100명 미만의 숙박시설이 있는 수련시설.</ol>
+                </li>
+                <li>자동화재속보설비:<span class="note-tooltip"
+                    title="2-사: 자동화재속보설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다. 다만, 방재실 등 화재 수신기가 설치된 장소에 24시간화재를 감시할 수 있는 사람이 근무하고 있는 경우에는 자동화재속보설비를 설치하지 않을 수 있다.&#10; 3) 수련시설(숙박시설이 있는 것만 해당한다)로서 바닥면적이 500㎡ 이상인 층이 있는 것">[참조]</span>숙박시설이 있고, 바닥면적이 500㎡ 이상인 층이 있는 수련시설
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우에 설치
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장
+                </li>`;
+
+            const SPFnotesList = document.getElementById('SPFnotesList');
+            SPFnotesList.innerHTML = ''; //운동시설 참고사항 초기화
+            SPFnotesList.innerHTML +=`
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우에 설치
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 1) 문화 및 집회시설, 종교시설, 운동시설 중 무대부의 바닥면적이 200㎡ 이상인경우에는 해당 무대부&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분 &#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)무대부의 바닥면적이 200㎡ 이상인 경우 해당 무대부</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const BFnotesList = document.getElementById('BFnotesList');
+            BFnotesList.innerHTML = ''; //업무시설 참고사항 초기화
+            BFnotesList.innerHTML +=`
+                <li>자동소화장치:<span class="note-tooltip"
+                    title="1-나: 자동소화장치를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 특정소방대상물 중 후드 및 덕트가 설치되어 있는 주방이 있는 특정소방대상물로 한다. 이 경우 해당 주방에 자동소화장치를 설치해야 한다.&#10; 1) 주거용 주방자동소화장치를 설치해야 하는 것: 아파트등 및 오피스텔의 모든층">[참조]</span>오피스텔의 모든 층 주방(주거용 주방자동소화장치)
+                </li>
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장
+                </li>`;
+
+            const LDFnotesList = document.getElementById('LDFnotesList');
+            LDFnotesList.innerHTML = ''; //숙박시설 참고사항 초기화
+            LDFnotesList.innerHTML +=`
+                <li>간이스프링클러설비:<span class="note-tooltip"
+                    title="1-마: 간이스프링클러설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 6) 숙박시설로 사용되는 바닥면적의 합계가 300㎡ 이상 600㎡ 미만인 시설">[참조]</span>숙박시설로 사용되는 바닥면적의 합계가 300㎡ 이상 600㎡ 미만인 시설
+                </li>
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="2-차: 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다&#10; 1) 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>가스시설이 설치된 경우에 설치
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  1) 방열복 또는 방화복(안전모, 보호장갑 및 안전화를 포함한다), 인공소생기및공기호흡기를 설치해야 하는 특정소방대상물: 지하층을 포함하는 층수가 7층이상인 것 중 관광호텔 용도로 사용하는 층&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>
+                    <ol>(1)지하층을 포함하는 층수가 7층이상인 것 중 관광호텔 용도로 사용하는 층에 방열복 또는 방화복 및 공기호흡기 설치</ol>
+                    <ol>(2)이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치</ol>
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분 &#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)지하층·무창층의 바닥면적의 합계가 1000㎡ 이상인 경우</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const AFnotesList = document.getElementById('AFnotesList');
+            AFnotesList.innerHTML = ''; //위락시설 참고사항 초기화
+            AFnotesList.innerHTML +=`
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>(1)내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>(2)전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.">[참조]</span>지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분 &#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>(1)지하층·무창층의 바닥면적의 합계가 1000㎡ 이상인 경우</ol>
+                    <ol>(2)특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const FnotesList = document.getElementById('FnotesList');
+            FnotesList.innerHTML = ''; //공장 참고사항 초기화
+            FnotesList.innerHTML +=`
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.&#10; 6) 소화수를 수집ㆍ처리하는 설비가 설치되어 있지 않은 중ㆍ저준위방사성폐기물의 저장시설. 이 시설에는 이산화탄소소화설비, 할론소화설비 또는 할로겐화합물 및 불활성기체 소화설비를 설치해야 한다.">[참조]</span>
+                    <ol>1. 내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>2. 전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>3. 소화수를 수집·처리하는 설비가 없는 중ㆍ저준위방사성폐기물의 저장시설(이산화탄소소화설비, 할론소화설비 또는 할로겐화합물 및 불활성기체 소화설비 설치)</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.&#10; 3) 1)에 해당하지 않는 공장 또는 창고시설로서 「화재의 예방 및 안전관리에관한 법률 시행령」 별표 2에서 정하는 수량의 750배 이상의 특수가연물을저장ㆍ취급하는 것">[참조]</span>
+                    <ol>1. 지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상</ol>
+                    <ol>2. 지정수량 750배 이상을 저장·취급한는 시설</ol>
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장
+                </li>`;
+
+            const WnotesList = document.getElementById('WnotesList');
+            WnotesList.innerHTML = ''; //창고시설 참고사항 초기화
+            WnotesList.innerHTML +=`
+                <li>물분무등소화설비:<span class="note-tooltip"
+                    title="1-바: 물분무등소화설비를 설치해야 하는 특정소방대상물[위험물 저장 및 처리 시설중 가스시설, 발전시설의 전기저장시설 중 무정전전원공급장치(UPS)의 시설및지하구는 제외한다]은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 차고, 주차용 건축물 또는 철골 조립식 주차시설. 이 경우 연면적 800㎡ 이상인 것만 해당한다.&#10;3) 건축물의 내부에 설치된 차고ㆍ주차장으로서 차고 또는 주차의 용도로 사용되는 면적의 합계가 200㎡ 이상인 경우 해당 부분(50세대 미만 연립주택및다세대주택은 제외한다)&#10; 5) 특정소방대상물에 설치된 전기실ㆍ발전실ㆍ변전실(가연성 절연유를 사용하지않는 변압기ㆍ전류차단기 등의 전기기기와 가연성 피복을 사용하지 않은전선 및 케이블만을 설치한 전기실ㆍ발전실 및 변전실은 제외한다)ㆍ축전지실ㆍ통신기기실 또는 전산실, 그 밖에 이와 비슷한 것으로서 바닥면적이 300㎡이상인 것[하나의 방화구획 내에 둘 이상의 실(室)이 설치되어 있는 경우에는이를 하나의 실로 보아 바닥면적을 산정한다]. 다만, 내화구조로 된 공정제어실 내에 설치된 주조정실로서 양압시설(외부 오염 공기 침투를 차단하고 내부의 나쁜 공기가 자연스럽게 외부로 흐를 수 있도록 한 시설을 말한다)이 설치되고 전기기기에 220볼트 이하인 저전압이 사용되며 종업원이 24시간 상주하는 곳은 제외한다.">[참조]</span>
+                    <ol>1. 내부 차고·주차장 용도 사용면적 200㎡ 이상인 경우 해당 층에 설치.</ol>
+                    <ol>2. 전기실·발전실·변전실·축전지실·통신기기실·전산실 바닥면적 300㎡ 이상인 경우 해당 층에 설치.</ol>
+                </li>
+                <li>옥외소화전설비:<span class="note-tooltip"
+                    title="1-사: 옥외소화전설비를 설치해야 하는 특정소방대상물(아파트등, 위험물 저장 및처리 시설 중 가스시설, 지하구 및 터널은 제외한다)은 다음의 어느 하나에해당하는 것으로 한다.&#10; 1) 지상 1층 및 2층의 바닥면적의 합계가 9천㎡ 이상인 것. 이 경우 같은구(區) 내의 둘 이상의 특정소방대상물이 행정안전부령으로 정하는 연소(延燒)우려가 있는 구조인 경우에는 이를 하나의 특정소방대상물로 본다.&#10; 3) 1)에 해당하지 않는 공장 또는 창고시설로서 「화재의 예방 및 안전관리에관한 법률 시행령」 별표 2에서 정하는 수량의 750배 이상의 특수가연물을저장ㆍ취급하는 것">[참조]</span>
+                    <ol>1. 지상1층 ~ 2층 바닥면적의 합계가 9000㎡ 이상</ol>
+                    <ol>2. 지정수량 750배 이상을 저장·취급한는 시설</ol>
+                </li>
+                <li>가스누설경보기:<span class="note-tooltip"
+                    title="3-처: 차. 가스누설경보기를 설치해야 하는 특정소방대상물(가스시설이 설치된 경우만해당한다)은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 2) 수련시설, 운동시설, 숙박시설, 창고시설 중 물류터미널, 장례시설">[참조]</span>가스시설이 있는 물류터미널
+                </li>
+                <li>인명구조기구:<span class="note-tooltip"
+                    title="3-나: 인명구조기구를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10; 3) 공기호흡기를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다.&#10;  마) 제1호바목 및 화재안전기준에 따라 이산화탄소소화설비(호스릴이산화탄소소화설비는 제외한다)를 설치해야 하는 특정소방대상물">[참조]</span>이산화탄소소화설비를 설치해야 하는 특정소방대상물의 경우 공기호흡기 설치
+                </li>
+                <li>제연설비:<span class="note-tooltip"
+                    title="5-가: 제연설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는것으로 한다.&#10; 3) 지하층이나 무창층에 설치된 근린생활시설, 판매시설, 운수시설, 숙박시설, 위락시설, 의료시설, 노유자 시설 또는 창고시설(물류터미널로 한정한다)로서해당 용도로 사용되는 바닥면적의 합계가 1천㎡ 이상인 경우 해당 부분&#10; 7) 특정소방대상물(갓복도형 아파트등은 제외한다)에 부설된 특별피난계단, 비상용 승강기의 승강장 또는 피난용 승강기의 승강장">[참조]</span>
+                    <ol>1. 지하층·무창층의 바닥면적의 합계가 1000㎡ 이상인 물류터미널</ol>
+                    <ol>2. 특별피난계단, 비상용 승강기 승강장의, 피난용 승강기의 승강장</ol>
+                </li>`;
+
+            const HFnotesList = document.getElementById('HFnotesList');
+            HFnotesList.innerHTML = ''; //위험물 저장 및 처리 시설 참고사항 초기화
+            HFnotesList.innerHTML +=`
+                `;
+
+
+            if (buildingType === '아파트') {
+                const apartArea = parseFloat(document.getElementById('apartArea').value);
+                const apartgroundFloors = parseInt(document.getElementById('apartgroundFloors').value, 10);
+                const apartbasementFloorsInput = document.getElementById('apartbasementFloors').value;
+                const apartbasementAreaSumInput = document.getElementById('apartbasementAreaSum').value;
+
+                const apartbasementFloors = apartbasementFloorsInput ==='' ? null : parseInt(apartbasementFloorsInput, 10);
+                const apartbasementAreaSum = apartbasementAreaSumInput ==='' ? null : parseFloat(apartbasementAreaSumInput);
+
+                if(apartArea === null || apartgroundFloors === null || apartbasementFloors === null || apartbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const facilities = new Set ();
+                if (apartArea >= 33) facilities.add('소화기구');
+                facilities.add('자동소화장치(주방)');
+                if (apartArea >= 3000) facilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = '옥내소화전설비: 지하층·무창층·4층이상인 층이 바닥면적이 600㎡ 이상인 층이 있는 경우 모든 층에 설치.<span class="note-tooltip" title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 1) 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층(축사는 제외한다)으로서 바닥면적이 600㎡ 이상인 층이있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 600㎡ 이상인 층이 있는 것">[참조]</span>';
+                    notesList.appendChild(newNote);
+                }
+                if (apartgroundFloors >= 6) facilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = '스프링클러설비: 지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치.<span class="note-tooltip" title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>';
+                    notesList.appendChild(newNote);
+                }
+                if (apartbasementAreaSum >= 200) facilities.add('물분무소화설비');
+                if (apartArea >= 400) facilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = '비상경보설비: 지하층·무창층 바닥면적 150㎡ 이상인 층이 있는 경우 모든 층에 설치.<span class="note-tooltip" title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>';
+                    notesList.appendChild(newNote);
+                }
+                facilities.add('자동화재탐지설비(모든 층)');
+                if (apartArea >= 3500 || apartgroundFloors >= 11 || apartbasementFloors >= 3) facilities.add('비상방송설비(모든 층)');
+                facilities.add('피난기구(피난층 제외 지상3층~지상10층까지 설치) *150세대 이상으로 승강기가 설치된 공동주택은 공기안전매트 설치');
+                facilities.add('아파트 소형유도등');
+                if (apartgroundFloors + apartbasementFloors >= 5 && apartArea >= 3000) facilities.add('비상조명등');
+                else  {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = '비상조명등: 지하층·무창층 바닥면적 450㎡ 이상인 층이 있는 경우 해당 층에 설치<span class="note-tooltip" title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다.&#10; 2) 지하층을 포함하는 층수가 5층 이상인 건축물로서 연면적 3천㎡ 이상인경우에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>';
+                    notesList.appendChild(newNote);
+                }
+                if (apartgroundFloors >= 5000) facilities.add('상수도소화용수설비');
+                if (apartgroundFloors >= 5 && apartArea >= 6000) facilities.add('연결송수관설비(모든 층)');
+                else if (apartgroundFloors + apartbasementFloors >= 7) facilities.add('연결송수관설비(모든 층)');
+                else if (apartbasementFloors >=3 && apartbasementAreaSum >= 1000) facilities.add('연결송수관설비(모든 층)');
+                if (apartgroundFloors >= 11) facilities.add('비상콘센트설비(11층 이상의 층)');
+                if (apartbasementFloors >= 3 && apartbasementAreaSum >= 1000) facilities.add('비상콘센트설비(지하층의 모든 층)');
+                if (apartbasementAreaSum >= 3000) facilities.add('무선통신보조설비(지하층의 모든 층)');
+                else if (apartbasementFloors >= 3 && apartbasementAreaSum >= 1000) facilities.add('무선통신보조설비(지하층의 모든 층)');
+                if (apartgroundFloors >= 30) facilities.add('무선통신보조설비(16층 이상의 층)');
+
+                resultList.innerHTML = Array.from(facilities).map(facility => `<li>${facility}</li>`).join('');
+            } 
+            
+            else if (buildingType === '근린생활시설') {
+                const LFArea = parseFloat(document.getElementById('LFArea').value);
+                const LFgroundFloors = parseFloat(document.getElementById('LFgroundFloors').value,10);
+                const LFbasementFloorsInput = document.getElementById('LFbasementFloors').value;
+                const LFbasementAreaSumInput = document.getElementById('LFbasementAreaSum').value;
+
+                const LFbasementFloors = LFbasementFloorsInput ==='' ? null : parseInt(LFbasementFloorsInput, 10);
+                const LFbasementAreaSum = LFbasementAreaSumInput ==='' ? null : parseFloat(LFbasementAreaSumInput);
+
+                if (!LFArea || !LFgroundFloors  || LFbasementFloors === null || LFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const LFfacilities = new Set ();
+                if (LFArea >= 33) LFfacilities.add('소화기구');
+                if (LFArea >= 1500) LFfacilities.add   ('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: . 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    LFnotesList.appendChild(newNote);
+                }
+                if (LFgroundFloors >= 6) LFfacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 5) 다음의 어느 하나에 해당하는 용도로 사용되는 시설의 바닥면적의 합계가600㎡ 이상인 것은 모든 층&#10;  가) 근린생활시설 중 조산원 및 산후조리원&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                                    <li>(1)조산원·산후조리원의 바닥면적의 합계가 600㎡ 이상인 것은 모든 층에 설치</li>
+                                                    <li>(2)지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치.</li>
+                                        </ol>`;
+                    LFnotesList.appendChild(newNote);
+                }
+                if (LFArea >= 400) LFfacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층&#10; 4) 50명 이상의 근로자가 작업하는 옥내 작업장">[참조]</span>
+                                        <ol> 
+                                                    <li>(1)지하층·무창층 바닥면적이 150㎡ 이상인 층(*공연장은 100㎡ 이상)</li>
+                                                    <li>(2)50명 이상 근로자가 작업하는 옥내 작업장</li>
+                                        </ol>`;
+                    LFnotesList.appendChild(newNote);
+                }
+                if (LFArea >= 600 || LFgroundFloors >= 6) LFfacilities.add('자동화재탐지설비')
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `자동화재탐지설비:<span class="note-tooltip"
+                                        title="2-다: 자동화재탐지설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 4) 근린생활시설 중 목욕장, 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 운동시설, 업무시설, 공장, 창고시설, 위험물 저장 및 처리 시설, 항공기 및자동차 관련 시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 관광 휴게시설, 지하상가로서 연면적 1천㎡ 이상인 경우에는 모든 층&#10; 12) 3)에 해당하지 않는 근린생활시설 중 조산원 및 산후조리원">[참조]</span>
+                                        <ol> 
+                                                    <li>(1)조산원·산후조리원</li>
+                                                    <li>(2)연면적 1000㎡ 이상의 목욕탕</li>
+                                        </ol>
+                                        시각경보기:<span class="note-tooltip"
+                                        title="2-라: 시각경보기를 설치해야 하는 특정소방대상물은 다목에 따라 자동화재탐지설비를 설치해야 하는 특정소방대상물 중 다음의 어느 하나에 해당하는 것으로한다.&#10; 1) 근린생활시설, 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>
+                                        <ol> 
+                                                    <li>(1)조산원·산후조리원</li>
+                                                    <li>(2)연면적 1000㎡ 이상의 목욕탕</li>
+                                        </ol>`;
+                    LFnotesList.appendChild(newNote);
+                }
+                if (LFArea >= 600 || LFgroundFloors >= 6) LFfacilities.add('시각경보기');
+                if (LFArea >= 3500 || LFgroundFloors >= 11 || LFbasementFloors >= 3) LFfacilities.add('비상방송설비');
+                if (LFgroundFloors >= 3) LFfacilities.add('피난기구(피난층 제외 지상3층 ~ 지상10층까지 설치) *입원실이 있는 의원·접골원·조산원은 구조대 설치');
+                LFfacilities.add('유도등');
+                if (LFgroundFloors + LFbasementFloors >= 5 && LFArea >= 3000) LFfacilities.add('비상조명등')
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다.&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span> 지하층·무창층 바닥면적이 450㎡ 이상인 경우 해당 층에 설치`
+                    LFnotesList.appendChild(newNote);
+                }
+                if (LFArea >= 5000) LFfacilities.add('상수도소화용수설비');
+                
+                if (LFgroundFloors >= 5 && LFArea >= 6000) LFfacilities.add('연결송수관설비(모든 층)');
+                else if (LFgroundFloors + LFbasementFloors >= 7) LFfacilities.add('연결송수관설비(모든 층)');
+                else if (LFbasementFloors >=3 && LFbasementAreaSum >= 1000) LFfacilities.add('연결송수관설비(모든 층)');
+                
+                if (LFbasementAreaSum >= 150) LFfacilities.add('연결살수설비(지하 전층 *부속 연결통로 포함)');
+                if (LFgroundFloors >= 11) LFfacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (LFbasementFloors >= 3 && LFbasementAreaSum >= 1000) LFfacilities.add('비상콘센트설비(지하 모든 층)');
+                if (LFbasementAreaSum >= 3000) LFfacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (LFbasementFloors >= 3 && LFbasementAreaSum >= 1000) LFfacilities.add('무선통신보조설비(지하 모든 층)');
+                if (LFgroundFloors >= 30) LFfacilities.add('무선통신보조설비(16층 이상 모든 층)');
+                
+
+                resultList.innerHTML = Array.from(LFfacilities).map(facility => `<li>${facility}</li>`).join('');
+ 
+            }
+
+            else if (buildingType === '문화 및 집회시설') {
+                const CFArea = parseFloat(document.getElementById('CFArea').value);
+                const CFgroundFloors = parseInt(document.getElementById('CFgroundFloors').value,10);
+                const CFbasementFloorsInput = document.getElementById('CFbasementFloors').value;
+                const CFbasementAreaSumInput = document.getElementById('CFbasementAreaSum').value;
+
+                const CFbasementFloors = CFbasementFloorsInput ==='' ? null : parseInt(CFbasementFloorsInput, 10);
+                const CFbasementAreaSum = CFbasementAreaSumInput ==='' ? null : parseFloat(CFbasementAreaSumInput);
+
+                if (!CFArea || !CFgroundFloors  || CFbasementFloors === null || CFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const CFfacilities = new Set();
+                if (CFArea >= 33) CFfacilities.add('소화기구');
+                if (CFArea >= 3000) CFfacilities.add('욕내소화전설비');
+                else {
+                    const   newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 1) 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층(축사는 제외한다)으로서 바닥면적이 600㎡ 이상인 층이있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 600㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층 이상인 층이 바닥면적이 600㎡ 이상인 층이 있는 경우 모든 층에 설치</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것은 해당 부분에 설치</li>
+                                        </ol>`;
+                    CFnotesList.appendChild(newNote);
+                }
+                if (CFgroundFloors >= 6) CFfacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 3) 문화 및 집회시설(동ㆍ식물원은 제외한다), 종교시설(주요구조부가 목조인것은 제외한다), 운동시설(물놀이형 시설 및 바닥이 불연재료이고 관람석이없는 운동시설은 제외한다)로서 다음의 어느 하나에 해당하는 경우에는 모든층&#10;  가) 수용인원이 100명 이상인 것&#10;  나) 영화상영관의 용도로 쓰는 층의 바닥면적이 지하층 또는 무창층인 경우에는 500㎡ 이상, 그 밖의 층의 경우에는 1천㎡ 이상인 것&#10;  다) 무대부가 지하층ㆍ무창층 또는 4층 이상의 층에 있는 경우에는 무대부의면적이 300㎡ 이상인 것&#10;  라) 무대부가 다) 외의 층에 있는 경우에는 무대부의 면적이 500㎡ 이상인것&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span> 
+                                        <ol>
+                                            <li>(1)수용인원 100명 이상 모든 층에 설치(동·식물원 제외)</li>
+                                            <li>(2)지하층·무창층·4층 이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                            <li>(3)영화상영관 용도의 지하층·무창층 바닥면적이 500㎡ 이상, 그 밖의 층의 경우에는 1000㎡ 이상인 경우 모든 층에 설치</li>
+                                            <li>(4)무대부가 지하층·무창층·4층 이상인 층에 있는 경우에는 무대부 면적이 300㎡ 이상 그 밖의 층의 경우 500㎡ 이상인 경우 모든 층에 설치</li>
+                                        </ol>`;
+                    CFnotesList.appendChild(newNote);
+                }
+                if (CFArea >= 400) CFfacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비: <span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span> 지하층·무창층 바닥면적이 150㎡ 이상 층(공연장은 100㎡ 이상)`
+                    CFnotesList.appendChild(newNote);
+                }
+                if (CFgroundFloors >= 6 || CFArea >= 1000) {
+                    CFfacilities.add('자동화재탐지설비');
+                    CFfacilities.add('시각경보기(공연장·집회장·관람장에는 시선이 집중되는 무대부 부분 등에 설치)');
+                }
+                if (CFArea >= 3500 || CFgroundFloors >= 11 || CFbasementFloors >= 3) CFfacilities.add('비상방송설비');
+                if (CFgroundFloors >= 3) CFfacilities.add('피난기구(피난층 제외 지상3층 ~ 지상10층까지 설치)');
+                CFfacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지) *공연장·집회장·관람장은 대형유도등 및 객석유도등 설치');
+                if (CFgroundFloors + CFbasementFloors >= 5 && CFArea >= 3000) CFfacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등: <span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다.&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span> 지하층·무창층 바닥면적이 450㎡ 이상인 경우 해당 층에 설치`
+                    CFnotesList.appendChild(newNote);
+                }
+                if (CFArea >= 5000) CFfacilities.add('상수도소화용수설비');
+                if (CFgroundFloors >= 5 && CFArea >= 6000) CFfacilities.add('연결송수관설비(모든 층)');
+                else if (CFgroundFloors + CFbasementFloors >= 7) CFfacilities.add('연결송수관설비(모든 층)');
+                else if (CFbasementFloors >= 3 && CFbasementAreaSum >= 1000) CFfacilities.add('연결송수관설비(모든 층)');
+                if (CFbasementAreaSum >= 150) CFfacilities.add('연결살수설비(지하 모든 층) *부속된 연결통로 포함');
+                if (CFgroundFloors >= 11) CFfacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (CFbasementFloors >= 3 && CFbasementAreaSum >= 1000) CFfacilities.add('비상콘센트설비(지하 모든 층)');
+                if (CFbasementAreaSum >= 3000) CFfacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (CFbasementFloors >= 3 && CFbasementAreaSum >= 1000) CFfacilities.add('무선통신보조설비(지하 모든 층)');
+                if (CFgroundFloors >= 30 ) CFfacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+                resultList.innerHTML = Array.from(CFfacilities).map(facility => `<li>${facility}</li>`).join('');
+
+            }
+            
+            else if (buildingType === '종교시설') {
+                const RFArea = parseFloat(document.getElementById('RFArea').value);
+                const RFgroundFloors = parseInt(document.getElementById('RFgroundFloors').value,10);
+                const RFbasementFloorsInput = document.getElementById('RFbasementFloors').value;
+                const RFbasementAreaSumInput = document.getElementById('RFbasementAreaSum').value;
+
+                const RFbasementFloors = RFbasementFloorsInput ==='' ? null : parseInt(RFbasementFloorsInput, 10);
+                const RFbasementAreaSum = RFbasementAreaSumInput ==='' ? null : parseFloat(RFbasementAreaSumInput);
+
+                if (!RFArea || !RFgroundFloors  || RFbasementFloors === null || RFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const RFacilities = new Set();
+                if (RFArea >= 33) RFacilities.add('소화기구');
+                if (RFArea >= 3000) RFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 1) 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층(축사는 제외한다)으로서 바닥면적이 600㎡ 이상인 층이있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 600㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층 이상인 층이 바닥면적이 600㎡ 이상인 층이 있는 경우 모든 층에 설치</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것은 해당 부분에 설치</li>
+                                        </ol>`;
+                    RFnotesList.appendChild(newNote);
+                }
+                if (RFgroundFloors >= 6) RFacilities.add('스프링클러설비(모든 층)');
+                else{
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비: <span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 3) 문화 및 집회시설(동ㆍ식물원은 제외한다), 종교시설(주요구조부가 목조인것은 제외한다), 운동시설(물놀이형 시설 및 바닥이 불연재료이고 관람석이없는 운동시설은 제외한다)로서 다음의 어느 하나에 해당하는 경우에는 모든층&#10;  가) 수용인원이 100명 이상인 것&#10;  다) 무대부가 지하층ㆍ무창층 또는 4층 이상의 층에 있는 경우에는 무대부의면적이 300㎡ 이상인 것&#10;  라) 무대부가 다) 외의 층에 있는 경우에는 무대부의 면적이 500㎡ 이상인것&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>(1)수용인원 100명 이상 모든 층</li>
+                                            <li>(2)지하층·무창층·4층 이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                        </ol>`;
+                    RFnotesList.appendChild(newNote);
+                }
+                if (RFArea >= 400) RFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비: <span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>
+                                        지하층·무창층 바닥면적이 150㎡ 이상인 층이 있는 경우 모든 층에 설치`;
+                    RFnotesList.appendChild(newNote);
+                }
+                if (RFgroundFloors >= 6 || RFArea >= 1000) {
+                    RFacilities.add('자동화재탐지설비');
+                    RFacilities.add('시각경보기');
+                }
+                if (RFArea >= 3500 || RFgroundFloors >= 11 || RFbasementFloors >=3) RFacilities.add('비상방송설비');
+                if (RFgroundFloors >= 3) RFacilities.add('피난기구(피난층 제외 지상3층 ~ 지상10층까지 설치)');
+                RFacilities.add('유도등');
+                if (RFgroundFloors + RFbasementFloors >=5 && RFArea >= 3000) RFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등: <span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다.&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>
+                                        지하층·무창층 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    RFnotesList.appendChild(newNote);
+                }
+                if (RFArea >= 5000) RFacilities.add('상수도소화용수설비');
+                if (RFgroundFloors >= 5 && RFArea >= 6000) RFacilities.add('연결송수관설비(모든 층)');
+                else if (RFgroundFloors + RFbasementFloors >= 7) RFacilities.add('연결송수관설비(모든 층)');
+                else if (RFbasementFloors >= 3 && RFbasementAreaSum >= 1000) RFacilities.add('연결송수관설비(모든 층)');
+                if (RFbasementAreaSum >= 150)  RFacilities.add('연결살수설비(지하 모든 층)');
+                if (RFgroundFloors >= 11) RFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (RFbasementFloors >= 3 && RFbasementAreaSum >= 1000) RFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (RFbasementAreaSum >= 3000) RFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (RFbasementFloors >= 3 && RFbasementAreaSum >= 1000) RFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (RFgroundFloors >= 30) RFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+                resultList.innerHTML = Array.from(RFacilities).map(facility => `<li>${facility}</li>`).join('');
+
+            }
+
+            else if (buildingType === '판매시설') {
+                const SFArea = parseFloat(document.getElementById('SFArea').value);
+                const SFgroundFloors = parseInt(document.getElementById('SFgroundFloors').value,10);
+                const SFbasementFloorsInput = document.getElementById('SFbasementFloors').value;
+                const SFbasementAreaSumInput = document.getElementById('SFbasementAreaSum').value;
+
+                const SFbasementFloors = SFbasementFloorsInput ==='' ? null : parseInt(SFbasementFloorsInput, 10);
+                const SFbasementAreaSum = SFbasementAreaSumInput ==='' ? null : parseFloat(SFbasementAreaSumInput);
+
+                if (!SFArea || !SFgroundFloors  || SFbasementFloors === null || SFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const SFacilities = new Set();
+                if (SFArea >= 33) SFacilities.add('소화기구');
+                if (SFArea >= 1500) SFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: . 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    SFnotesList.appendChild(newNote);
+                }
+                if (SFgroundFloors >= 6) SFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 4) 판매시설, 운수시설 및 창고시설(물류터미널로 한정한다)로서 바닥면적의합계가 5천㎡ 이상이거나 수용인원이 500명 이상인 경우에는 모든 층&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>(1)바닥면적의 합계가 5000㎡ 이상이거나 수용인원이 500명 이상인 경우에는 모든 층에 설치</li>
+                                            <li>(2)지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                        </ol>`;
+                    SFnotesList.appendChild(newNote);
+                }
+                if (SFArea >= 400) SFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    SFnotesList.appendChild(newNote);
+                }
+                if (SFgroundFloors >= 6 || SFArea >= 1000) SFacilities.add('자동화재탐지설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `자동화재탐지설비:<span class="note-tooltip"
+                                        title="2-다: 자동화재탐지설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다&#10; 9) 판매시설 중 전통시장">[참조]</span>판매시설 중 전통시장에 설치`;
+                    SFnotesList.appendChild(newNote);
+                }
+                if (SFgroundFloors >= 6 || SFArea >= 1000) SFacilities.add('시각경보기');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `시각경보기:<span class="note-tooltip"
+                                        title="2-라: 시각경보기를 설치해야 하는 특정소방대상물은 다목에 따라 자동화재탐지설비를 설치해야 하는 특정소방대상물 중 다음의 어느 하나에 해당하는 것으로한다.&#10; 1) 근린생활시설, 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>판매시설 중 전통시장에 설치`;
+                    SFnotesList.appendChild(newNote);
+                }
+                if (SFArea >= 3500 || SFgroundFloors >= 11 || SFbasementFloors >= 3) SFacilities.add('비상방송설비');
+                if (SFgroundFloors >= 3) SFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                SFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (SFgroundFloors + SFbasementFloors >= 5 && SFArea >= 3000) SFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    SFnotesList.appendChild(newNote);
+                }
+                if (SFArea >= 5000) SFacilities.add('상수도소화용수설비');
+                if (SFgroundFloors >= 5 && SFArea >= 6000) SFacilities.add('연결송수관설비(모든 층)');
+                else if (SFgroundFloors + SFbasementFloors >= 7) SFacilities.add('연결송수관설비(모든 층)');
+                else if (SFbasementFloors >= 3 && SFbasementAreaSum >= 1000) SFacilities.add('연결송수관설비(모든 층)');
+                if ( SFbasementAreaSum >= 150) SFacilities.add('연결살수설비(지하 모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `연결살수설비:<span class="note-tooltip"
+                                        title="3-다: 연결살수설비를 설치해야 하는 특정소방대상물(지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 1) 판매시설, 운수시설, 창고시설 중 물류터미널로서 해당 용도로 사용되는 부분의바닥면적의 합계가 1천㎡ 이상인 경우에는 해당 시설">[참조]</span>바닥면적의 합계가 1000천㎡ 이상인 경우 설치`;
+                    SFnotesList.appendChild(newNote);
+                }
+                if (SFgroundFloors >= 11) SFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (SFbasementFloors >= 3 && SFbasementAreaSum >= 1000) SFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (SFbasementAreaSum >= 3000) SFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (SFbasementFloors >= 3 && SFbasementAreaSum >= 1000) SFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (SFgroundFloors >= 30) SFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+                resultList.innerHTML = Array.from(SFacilities).map(facility => `<li>${facility}</li>`).join('');
+
+            }
+
+            else if (buildingType === '운수시설') {
+                const TFArea = parseFloat(document.getElementById('TFArea').value);
+                const TFgroundFloors = parseInt(document.getElementById('TFgroundFloors').value,10);
+                const TFbasementFloorsInput = document.getElementById('TFbasementFloors').value;
+                const TFbasementAreaSumInput = document.getElementById('TFbasementAreaSum').value;
+
+                const TFbasementFloors = TFbasementFloorsInput ==='' ? null : parseInt(TFbasementFloorsInput, 10);
+                const TFbasementAreaSum = TFbasementAreaSumInput ==='' ? null : parseFloat(TFbasementAreaSumInput);
+
+                if (!TFArea || !TFgroundFloors  || TFbasementFloors === null || TFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const TFacilities = new Set();
+                if (TFArea >= 33) TFacilities.add('소화기구');
+                if (TFArea >= 1500) TFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: . 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    TFnotesList.appendChild(newNote);
+                }
+                if (TFgroundFloors >= 6) TFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 4) 판매시설, 운수시설 및 창고시설(물류터미널로 한정한다)로서 바닥면적의합계가 5천㎡ 이상이거나 수용인원이 500명 이상인 경우에는 모든 층&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>(1)바닥면적의 합계가 5000㎡ 이상이거나 수용인원이 500명 이상인 경우에는 모든 층에 설치</li>
+                                            <li>(2)지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                        </ol>`;
+                    TFnotesList.appendChild(newNote);
+                }
+                if (TFArea >= 400) TFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    TFnotesList.appendChild(newNote);
+                }
+                if (TFgroundFloors >= 6 || TFArea >= 1000) TFacilities.add('자동화재탐지설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `자동화재탐지설비:<span class="note-tooltip"
+                                        title="2-다: 자동화재탐지설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다&#10; 9) 판매시설 중 전통시장">[참조]</span>판매시설 중 전통시장에 설치`;
+                    TFnotesList.appendChild(newNote);
+                }
+                if (TFgroundFloors >= 6 || TFArea >= 1000) TFacilities.add('시각경보기');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `시각경보기:<span class="note-tooltip"
+                                        title="2-라: 시각경보기를 설치해야 하는 특정소방대상물은 다목에 따라 자동화재탐지설비를 설치해야 하는 특정소방대상물 중 다음의 어느 하나에 해당하는 것으로한다.&#10; 1) 근린생활시설, 문화 및 집회시설, 종교시설, 판매시설, 운수시설, 의료시설, 노유자 시설">[참조]</span>판매시설 중 전통시장에 설치`;
+                    TFnotesList.appendChild(newNote);
+                }
+                if (TFArea >= 3500 || TFgroundFloors >= 11 || TFbasementFloors >= 3) TFacilities.add('비상방송설비');
+                if (TFgroundFloors >= 3) TFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                TFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (TFgroundFloors + TFbasementFloors >= 5 && TFArea >= 3000) TFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    TFnotesList.appendChild(newNote);
+                }
+                if (TFArea >= 5000) TFacilities.add('상수도소화용수설비');
+                if (TFgroundFloors >= 5 && TFArea >= 6000) TFacilities.add('연결송수관설비(모든 층)');
+                else if (TFgroundFloors + TFbasementFloors >= 7) TFacilities.add('연결송수관설비(모든 층)');
+                else if (TFbasementFloors >= 3 && TFbasementAreaSum >= 1000) TFacilities.add('연결송수관설비(모든 층)');
+                if (TFbasementAreaSum >= 150) TFacilities.add('연결살수설비(지하 모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `연결살수설비:<span class="note-tooltip"
+                                        title="3-다: 연결살수설비를 설치해야 하는 특정소방대상물(지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 1) 판매시설, 운수시설, 창고시설 중 물류터미널로서 해당 용도로 사용되는 부분의바닥면적의 합계가 1천㎡ 이상인 경우에는 해당 시설">[참조]</span>바닥면적의 합계가 1000천㎡ 이상인 경우 설치`;
+                    SFnotesList.appendChild(newNote);
+                }
+                if (TFgroundFloors >= 11) TFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (TFbasementFloors >= 3 && TFbasementAreaSum >= 1000) TFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (TFbasementAreaSum >= 3000) TFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (TFbasementFloors >= 3 && TFbasementAreaSum >= 1000) TFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (TFgroundFloors >= 30) TFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+                resultList.innerHTML = Array.from(TFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '의료시설') {
+                const MFArea = parseFloat(document.getElementById('MFArea').value);
+                const MFgroundFloors = parseInt(document.getElementById('MFgroundFloors').value,10);
+                const MFbasementFloorsInput = document.getElementById('MFbasementFloors').value;
+                const MFbasementAreaSumInput = document.getElementById('MFbasementAreaSum').value;
+
+                const MFbasementFloors = MFbasementFloorsInput ==='' ? null : parseInt(MFbasementFloorsInput, 10);
+                const MFbasementAreaSum = MFbasementAreaSumInput ==='' ? null : parseFloat(MFbasementAreaSumInput);
+
+                if (!MFArea || !MFgroundFloors  || MFbasementFloors === null || MFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const MFacilities = new Set();
+                if (MFArea >= 33) MFacilities.add('소화기구');
+                if (MFArea >= 1500) MFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: . 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    MFnotesList.appendChild(newNote);
+                }
+                if (MFgroundFloors >= 6) MFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 5) 다음의 어느 하나에 해당하는 용도로 사용되는 시설의 바닥면적의 합계가600㎡ 이상인 것은 모든 층&#10;  나) 의료시설 중 정신의료기관&#10;  다) 의료시설 중 종합병원, 병원, 치과병원, 한방병원 및 요양병원&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>(1)바닥면적의 합계가 600㎡ 이상인 정신의료기관·요양병원·종합병원·병원·치과병원·한방병원 모든 층에 설치(*종합병원·병원·치과병원·한방병원은 2026.12.31 소급 유예)</li>
+                                            <li>(2)지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                        </ol>`;
+                    MFnotesList.appendChild(newNote);
+                }
+                if (MFArea >= 400) MFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    MFnotesList.appendChild(newNote);
+                }
+                if (MFgroundFloors >= 6) MFacilities.add('자동화재탐지, 시각경보기');
+                else if (MFArea >= 600) MFacilities.add('자동화재탐지설비, 시각경보기');
+                else MFacilities.add('*요양병원은 자동화재탐지설비와 시각경보기 설치');
+                if (MFgroundFloors < 6 && MFArea < 600 && MFArea >= 300) MFacilities.add('*정신의료기관·의료재활시설인 경우 자동화재탐지설비, 시각경보기 설치');
+                if (MFgroundFloors < 6 && MFArea < 300) MFacilities.add('*창살이 설치된 정신의료기관·의료재활시설인 경우 자동화재탐지설비, 시각경보기 설치');
+                
+                if (MFArea >= 3500 || MFgroundFloors >= 11 || MFbasementFloors >= 3) MFacilities.add('비상방송설비');
+                if (MFgroundFloors >= 3) MFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                if (MFgroundFloors + MFbasementFloors >=5) MFacilities.add('인명구조기구(방열복 또는 방화복 및 공기호흡기)');
+                MFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (MFgroundFloors + MFbasementFloors >= 5 && MFArea >= 3000) MFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    MFnotesList.appendChild(newNote);
+                }
+                if (MFArea >= 5000) MFacilities.add('상수도소화용수설비');
+                if (MFgroundFloors >= 5 && MFArea >= 6000) MFacilities.add('연결송수관설비(모든 층)');
+                else if (MFgroundFloors + MFbasementFloors >= 7) MFacilities.add('연결송수관설비(모든 층)');
+                else if (MFbasementFloors >= 3 && MFbasementAreaSum >= 1000) MFacilities.add('연결송수관설비(모든 층)');
+                if (MFbasementAreaSum >= 150) MFacilities.add('연결살수설비');
+                if (MFgroundFloors >= 11) MFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (MFbasementFloors >= 3 && MFbasementAreaSum >= 1000) MFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (MFbasementAreaSum >= 3000) MFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (MFbasementFloors >= 3 && MFbasementAreaSum >= 1000) MFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (MFgroundFloors >= 30) MFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+                resultList.innerHTML = Array.from(MFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '교육연구시설') {
+                const EFArea = parseFloat(document.getElementById('EFArea').value);
+                const EFgroundFloors = parseInt(document.getElementById('EFgroundFloors').value,10);
+                const EFbasementFloorsInput = document.getElementById('EFbasementFloors').value;
+                const EFbasementAreaSumInput = document.getElementById('EFbasementAreaSum').value;
+
+                const EFbasementFloors = EFbasementFloorsInput ==='' ? null : parseInt(EFbasementFloorsInput, 10);
+                const EFbasementAreaSum = EFbasementAreaSumInput ==='' ? null : parseFloat(EFbasementAreaSumInput);
+
+                if (!EFArea || !EFgroundFloors  || EFbasementFloors === null || EFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const EFacilities = new Set();
+                if (EFArea >= 33) EFacilities.add('소화기구');
+                if (EFArea >= 1500) EFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 1) 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층(축사는 제외한다)으로서 바닥면적이 600㎡ 이상인 층이있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 600㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 600㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    EFnotesList.appendChild(newNote);
+                }
+                if (EFgroundFloors >= 6) EFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 2) 기숙사(교육연구시설ㆍ수련시설 내에 있는 학생 수용을 위한 것을 말한다)또는 복합건축물로서 연면적 5천㎡ 이상인 경우에는 모든 층&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>(1)기숙사로서 연면적 5000㎡ 이상인 경우 모든 층에 설치</li>
+                                            <li>(2)지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                        </ol>`;
+                    EFnotesList.appendChild(newNote);
+                }
+                if (EFArea >= 400) EFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    EFnotesList.appendChild(newNote);
+                }
+                if (EFgroundFloors >= 6 || EFArea >= 2000) EFacilities.add('자동화재탐지설비');
+                if (EFgroundFloors >= 6 || EFArea >= 2000) EFacilities.add('시각경보기(도서관만 적용)');
+                if (EFArea >= 3500 || EFgroundFloors >= 11 || EFbasementFloors >= 3) EFacilities.add('비상방송설비');
+                if (EFgroundFloors >= 3) EFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                EFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (EFgroundFloors + EFbasementFloors >= 5 && EFArea >= 3000) EFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    EFnotesList.appendChild(newNote);
+                }
+                if (EFArea >= 5000) EFacilities.add('상수도소화용수설비');
+                if (EFgroundFloors >= 5 && EFArea >= 6000) EFacilities.add('연결송수관설비(모든 층)');
+                else if (EFgroundFloors + EFbasementFloors >= 7) EFacilities.add('연결송수관설비(모든 층)');
+                else if (EFbasementFloors >= 3 && EFbasementAreaSum >= 1000) EFacilities.add('연결송수관설비(모든 층)');
+                if (EFbasementAreaSum >= 150 && EFbasementAreaSum < 700) EFacilities.add('연결살수설비(지하 모든 층) *학교 제외');
+                else if (EFbasementAreaSum >= 700) EFacilities.add('연결살수설비');
+                if (EFgroundFloors >= 11) EFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (EFbasementFloors >= 3 && EFbasementAreaSum >= 1000) EFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (EFbasementAreaSum >= 3000) EFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (EFbasementFloors >= 3 && EFbasementAreaSum >= 1000) EFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (EFgroundFloors >= 30) EFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+                resultList.innerHTML = Array.from(EFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '노유자시설') {
+                const OFArea = parseFloat(document.getElementById('OFArea').value);
+                const OFgroundFloors = parseInt(document.getElementById('OFgroundFloors').value, 10);
+                const OFbasementFloorsInput = document.getElementById('OFbasementFloors').value;
+                const OFbasementAreaSumInput = document.getElementById('OFbasementAreaSum').value;
+
+                const OFbasementFloors = OFbasementFloorsInput ==='' ? null : parseInt(OFbasementFloorsInput, 10);
+                const OFbasementAreaSum = OFbasementAreaSumInput ==='' ? null : parseFloat(OFbasementAreaSumInput);
+
+                if(OFArea === null || OFgroundFloors === null || OFbasementFloors === null || OFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const OFacilities = new Set ();
+                if (OFArea >= 33) OFacilities.add('소화기구(투척용 소화용구 등을 소화기 수량의 1/2 이상 설치 가능)');
+                if (OFArea >= 1500) OFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    OFnotesList.appendChild(newNote);
+                }
+                if (OFgroundFloors >= 6 || OFArea >= 600) OFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    OFnotesList.appendChild(newNote);
+                }
+                if (OFArea < 400) OFacilities.add('단독경보형 감지기(*유치원만 설치)');
+                if (OFArea >= 400) OFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    OFnotesList.appendChild(newNote);
+                }
+                if (OFgroundFloors >= 6 || OFArea >= 400) OFacilities.add('자동화재탐지설비, 시각경보기(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `자동화재탐지설비, 시각경보기:<span class="note-tooltip"
+                                        title="2-다: 자동화재탐지설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 6) 노유자 생활시설의 경우에는 모든 층">[참조]</span>노유자 생활시설의 경우 모든 층에 설치.`;
+                    OFnotesList.appendChild(newNote);
+                }
+                if (OFArea >= 3500 || OFgroundFloors >= 11 || OFbasementFloors >= 3) OFacilities.add('비상방송설비');
+                if (OFArea >= 500) OFacilities.add('자동화재속보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `자동화재속보설비:<span class="note-tooltip"
+                                        title="2-사: 자동화재속보설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다. 다만, 방재실 등 화재 수신기가 설치된 장소에 24시간화재를 감시할 수 있는 사람이 근무하고 있는 경우에는 자동화재속보설비를 설치하지 않을 수 있다.&#10; 1) 노유자 생활시설">[참조]</span>노유자 생활시설`;
+                    OFnotesList.appendChild(newNote);
+                }
+                if (OFgroundFloors >= 1) OFacilities.add('피난기구(피난층 제외 지상 1층 ~ 지상10층에 설치)');
+                OFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (OFgroundFloors + OFbasementFloors >= 5 && OFArea >= 3000) OFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    OFnotesList.appendChild(newNote);
+                }
+                if (OFArea >= 5000) OFacilities.add('상수도소화용수설비');
+                if (OFgroundFloors >= 5 && OFArea >= 6000) OFacilities.add('연결송수관설비(모든 층)');
+                else if (OFgroundFloors + OFbasementFloors >= 7) OFacilities.add('연결송수관설비(모든 층)');
+                else if (OFbasementFloors >= 3 && OFbasementAreaSum >= 1000) OFacilities.add('연결송수관설비(모든 층)');
+                if (OFbasementAreaSum >= 150) OFacilities.add('연결살수설비(지하 모든 층)');
+                if (OFgroundFloors >= 11) OFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (OFbasementFloors >= 3 && OFbasementAreaSum >= 1000) OFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (OFbasementAreaSum >= 3000) OFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (OFbasementFloors >= 3 && OFbasementAreaSum >= 1000) OFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (OFgroundFloors >= 30) OFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+                resultList.innerHTML = Array.from(OFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '수련시설') {
+                const TRFArea = parseFloat(document.getElementById('TRFArea').value);
+                const TRFgroundFloors = parseInt(document.getElementById('TRFgroundFloors').value, 10);
+                const TRFbasementFloorsInput = document.getElementById('TRFbasementFloors').value;
+                const TRFbasementAreaSumInput = document.getElementById('TRFbasementAreaSum').value;
+
+                const TRFbasementFloors = TRFbasementFloorsInput ==='' ? null : parseInt(TRFbasementFloorsInput, 10);
+                const TRFbasementAreaSum = TRFbasementAreaSumInput ==='' ? null : parseFloat(TRFbasementAreaSumInput);
+
+                if(TRFArea === null || TRFgroundFloors === null || TRFbasementFloors === null || TRFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const TRFacilities = new Set ();
+                if (TRFArea >= 33) TRFacilities.add('소화기구');
+                if (TRFArea >= 1500) TRFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 1) 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층(축사는 제외한다)으로서 바닥면적이 600㎡ 이상인 층이있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 600㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 600㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    TRFnotesList.appendChild(newNote);
+                }
+                if (TRFgroundFloors >= 6) TRFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 2) 기숙사(교육연구시설ㆍ수련시설 내에 있는 학생 수용을 위한 것을 말한다)또는 복합건축물로서 연면적 5천㎡ 이상인 경우에는 모든 층&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층&#10; 5) 다음의 어느 하나에 해당하는 용도로 사용되는 시설의 바닥면적의 합계가600㎡ 이상인 것은 모든 층&#10;  마) 숙박이 가능한 수련시설">[참조]</span>
+                                        <ol>
+                                            <li>(1)기숙사로서 연면적 5000㎡ 이상인 경우 모든 층에 설치</li>
+                                            <li>(2)지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                            <li>(3)숙박이 가능한 수련시설 중 바닥면적의 합계가 600㎡ 이상인 것은 모든 층에 설치</li>
+                                        </ol>`;
+                    TRFnotesList.appendChild(newNote);
+                }
+                if (TRFArea >= 400) TRFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    TRFnotesList.appendChild(newNote);
+                }
+                if (TRFgroundFloors >= 6 || TRFArea >= 2000) TRFacilities.add('자동화재탐지설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `자도화재탐지설비:<span class="note-tooltip"
+                                        title="2-다: 자동화재탐지설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 7) 6)에 해당하지 않는 노유자 시설로서 연면적 400㎡ 이상인 노유자 시설및숙박시설이 있는 수련시설로서 수용인원 100명 이상인 경우에는 모든 층">[참조]</span>수용인원 100명 이상의 숙박시설이 있는 수련시설(모든 층)`;
+                    TRFnotesList.appendChild(newNote);
+                }
+                if (TRFArea >= 3500 || TRFgroundFloors >= 11 || TRFbasementFloors >= 3) TRFacilities.add('비상방송설비');
+                if (TRFgroundFloors >= 3) TRFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                TRFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (TRFgroundFloors + TRFbasementFloors >= 5 && TRFArea >= 3000) TRFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    TRFnotesList.appendChild(newNote);
+                }
+                if (TRFArea >= 5000) TRFacilities.add('상수도소화용수설비');
+                if (TRFgroundFloors >= 5 && TRFArea >= 6000) TRFacilities.add('연결송수관설비(모든 층)');
+                else if (TRFgroundFloors + TRFbasementFloors >= 7) TRFacilities.add('연결송수관설비(모든 층)');
+                else if (TRFbasementFloors >= 3 && TRFbasementAreaSum >= 1000) TRFacilities.add('연결송수관설비(모든 층)');
+                if (TRFbasementAreaSum >= 150) TRFacilities.add('연결살수설비(모든 층)');
+                if (TRFgroundFloors >= 11) TRFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (TRFbasementFloors >= 3 && TRFbasementAreaSum >= 1000) TRFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (TRFbasementAreaSum >= 3000) TRFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (TRFbasementFloors >= 3 && TRFbasementAreaSum >= 1000) TRFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (TRFgroundFloors >= 30) TRFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+
+                resultList.innerHTML = Array.from(TRFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '운동시설') {
+                const SPFArea = parseFloat(document.getElementById('SPFArea').value);
+                const SPFgroundFloors = parseInt(document.getElementById('SPFgroundFloors').value, 10);
+                const SPFbasementFloorsInput = document.getElementById('SPFbasementFloors').value;
+                const SPFbasementAreaSumInput = document.getElementById('SPFbasementAreaSum').value;
+
+                const SPFbasementFloors = SPFbasementFloorsInput ==='' ? null : parseInt(SPFbasementFloorsInput, 10);
+                const SPFbasementAreaSum = SPFbasementAreaSumInput ==='' ? null : parseFloat(SPFbasementAreaSumInput);
+
+                if(SPFArea === null || SPFgroundFloors === null || SPFbasementFloors === null || SPFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const SPFacilities = new Set ();
+                if (SPFArea >= 33) SPFacilities.add('소화기구');
+                if (SPFArea >= 1500) SPFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 1) 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층(축사는 제외한다)으로서 바닥면적이 600㎡ 이상인 층이있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 600㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 600㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    SPFnotesList.appendChild(newNote);
+                }
+                if (SPFgroundFloors >= 6) SPFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 3) 문화 및 집회시설(동ㆍ식물원은 제외한다), 종교시설(주요구조부가 목조인것은 제외한다), 운동시설(물놀이형 시설 및 바닥이 불연재료이고 관람석이없는 운동시설은 제외한다)로서 다음의 어느 하나에 해당하는 경우에는 모든층&#10;  가) 수용인원이 100명 이상인 것&#10;  다) 무대부가 지하층ㆍ무창층 또는 4층 이상의 층에 있는 경우에는 무대부의면적이 300㎡ 이상인 것&#10;  라) 무대부가 다) 외의 층에 있는 경우에는 무대부의 면적이 500㎡ 이상인것&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>(1)수용인원 100명 이상인 운동시설(*1,2,3의 경우 물놀이형 시설, 바닥이 불연재료거나 관람석이 없는 경우 제외한다)</li>
+                                            <li>(2)지하층ㆍ무창층 또는 4층 이상의 층에 있는 무대부의 면적이 300㎡ 이상인 운동시설</li>
+                                            <li>(3)지하층ㆍ무창층 또는 4층 이상의 층이 아닌 층에 있는 무대부의 면적이 500㎡ 이상인 운동시설</li>
+                                            <li>(4)지하층ㆍ무창층 또는 4층 이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                        </ol>`;
+                    SPFnotesList.appendChild(newNote);
+                }
+                if (SPFArea >= 400) SPFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    SPFnotesList.appendChild(newNote);
+                }
+                if (SPFgroundFloors >= 6 || SPFArea >= 1000) SPFacilities.add('자동화재탐지설비');
+                if (SPFgroundFloors >= 6 || SPFArea >= 1000) SPFacilities.add('시각경보기');
+                if (SPFArea >= 3500 || SPFgroundFloors >= 11 || SPFbasementFloors >= 3) SPFacilities.add('비상방송설비');
+                if (SPFgroundFloors >= 3) SPFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                SPFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (SPFgroundFloors + SPFbasementFloors >= 5 && SPFArea >= 3000) SPFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    SPFnotesList.appendChild(newNote);
+                }
+                if (SPFArea >= 5000) SPFacilities.add('상수도소화용수설비');
+                if (SPFgroundFloors >= 5 && SPFArea >= 6000) SPFacilities.add('연결송수관설비(모든 층)');
+                else if (SPFgroundFloors + SPFbasementFloors >= 7) SPFacilities.add('연결송수관설비(모든 층)');
+                else if (SPFbasementFloors >= 3 && SPFbasementAreaSum >= 1000) SPFacilities.add('연결송수관설비(모든 층)');
+                if (SPFbasementAreaSum >= 150) SPFacilities.add('연결살수설비(모든 층)');
+                if (SPFgroundFloors >= 11) SPFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (SPFbasementFloors >= 3 && SPFbasementAreaSum >= 1000) SPFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (SPFbasementAreaSum >= 3000) SPFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (SPFbasementFloors >= 3 && SPFbasementAreaSum >= 1000) SPFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (SPFgroundFloors >= 30) SPFacilities.add('무선통신보조설비(16층 이상 모든 층)');                
+
+                resultList.innerHTML = Array.from(SPFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '업무시설') {
+                const BFArea = parseFloat(document.getElementById('BFArea').value);
+                const BFgroundFloors = parseInt(document.getElementById('BFgroundFloors').value, 10);
+                const BFbasementFloorsInput = document.getElementById('BFbasementFloors').value;
+                const BFbasementAreaSumInput = document.getElementById('BFbasementAreaSum').value;
+
+                const BFbasementFloors = BFbasementFloorsInput ==='' ? null : parseInt(BFbasementFloorsInput, 10);
+                const BFbasementAreaSum = BFbasementAreaSumInput ==='' ? null : parseFloat(BFbasementAreaSumInput);
+
+                if(BFArea === null || BFgroundFloors === null || BFbasementFloors === null || BFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const BFacilities = new Set ();
+                if (BFArea >= 33) BFacilities.add('소화기구');
+                if (BFArea >= 1500) BFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치(*1,2 모두 업무시설 중 무인변전소 제외).</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    BFnotesList.appendChild(newNote);
+                }
+                if (BFgroundFloors >= 6) BFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    BFnotesList.appendChild(newNote);
+                }
+                if (BFArea >= 400) BFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    BFnotesList.appendChild(newNote);
+                }
+                if (BFgroundFloors >= 6 || BFArea >= 1000) BFacilities.add('자동화재탐지설비');
+                if (BFgroundFloors >= 6 || BFArea >= 1000) BFacilities.add('시각경보기');
+                if (BFArea >= 3500 || BFgroundFloors >= 11 || BFbasementFloors >= 3) BFacilities.add('비상방송설비');
+                if (BFgroundFloors >= 3) BFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                BFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (BFgroundFloors + BFbasementFloors >= 5 && BFArea >= 3000) BFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    BFnotesList.appendChild(newNote);
+                }
+                if (BFArea >= 5000) BFacilities.add('상수도소화용수설비');
+                if (BFgroundFloors >= 5 && BFArea >= 6000) BFacilities.add('연결송수관설비(모든 층)');
+                else if (BFgroundFloors + BFbasementFloors >= 7) BFacilities.add('연결송수관설비(모든 층)');
+                else if (BFbasementFloors >= 3 && BFbasementAreaSum >= 1000) BFacilities.add('연결송수관설비(모든 층)');
+                if (BFbasementAreaSum >= 150) BFacilities.add('연결살수설비(모든 층)');
+                if (BFgroundFloors >= 11) BFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (BFbasementFloors >= 3 && BFbasementAreaSum >= 1000) BFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (BFbasementAreaSum >= 3000) BFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (BFbasementFloors >= 3 && BFbasementAreaSum >= 1000) BFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (BFgroundFloors >= 30) BFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+            
+                resultList.innerHTML = Array.from(BFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '숙박시설') {
+                const LDFArea = parseFloat(document.getElementById('LDFArea').value);
+                const LDFgroundFloors = parseInt(document.getElementById('LDFgroundFloors').value, 10);
+                const LDFbasementFloorsInput = document.getElementById('LDFbasementFloors').value;
+                const LDFbasementAreaSumInput = document.getElementById('LDFbasementAreaSum').value;
+
+                const LDFbasementFloors = LDFbasementFloorsInput ==='' ? null : parseInt(LDFbasementFloorsInput, 10);
+                const LDFbasementAreaSum = LDFbasementAreaSumInput ==='' ? null : parseFloat(LDFbasementAreaSumInput);
+
+                if(LDFArea === null || LDFgroundFloors === null || LDFbasementFloors === null || LDFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const LDFacilities = new Set ();
+                if (LDFArea >= 33) LDFacilities.add('소화기구');
+                if (LDFArea >= 1500) LDFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    LDFnotesList.appendChild(newNote);
+                }
+                if (LDFgroundFloors >= 6) LDFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 5) 다음의 어느 하나에 해당하는 용도로 사용되는 시설의 바닥면적의 합계가600㎡ 이상인 것은 모든 층&#10;  바) 숙박시설&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>(1)바닥면적의 합계가 600㎡ 이상인 숙박시설의 경우 모든 층에 설치 </li>
+                                            <li>(2)지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                        </ol>`;
+                    LDFnotesList.appendChild(newNote);
+                }
+                if (LDFArea >= 400) LDFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    LDFnotesList.appendChild(newNote);
+                }
+                LDFacilities.add('자동화재탐지설비(모든 층)');
+                LDFacilities.add('시각경보기(모든 층)');
+                if (LDFArea >= 3500 || LDFgroundFloors >= 11 || LDFbasementFloors >= 3) LDFacilities.add('비상방송설비(모든 층)');
+                if (LDFgroundFloors >= 3) LDFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                LDFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (LDFgroundFloors + LDFbasementFloors >= 5 && LDFArea >= 3000) LDFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    LDFnotesList.appendChild(newNote);
+                }
+                LDFacilities.add('휴대용비상조명등(객실 또는 구획된 실마다 1개 이상 설치, *복도에 비상조명등 설치 시 휴대용 비상조명등 제외');
+                if (LDFArea >= 5000) LDFacilities.add('상수도소화용수설비');
+                if (LDFgroundFloors >= 5 && LDFArea >= 6000) LDFacilities.add('연결송수관설비(모든 층)');
+                else if (LDFgroundFloors + LDFbasementFloors >= 7) LDFacilities.add('연결송수관설비(모든 층)');
+                else if (LDFbasementFloors >= 3 && LDFbasementAreaSum >= 1000) LDFacilities.add('연결송수관설비(모든 층)');
+                if (LDFbasementAreaSum >= 150) LDFacilities.add('연결살수설비(모든 층)');
+                if (LDFgroundFloors >= 11) LDFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (LDFbasementFloors >= 3 && LDFbasementAreaSum >= 1000) LDFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (LDFbasementAreaSum >= 3000) LDFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (LDFbasementFloors >= 3 && LDFbasementAreaSum >= 1000) LDFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (LDFgroundFloors >= 30) LDFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+
+                resultList.innerHTML = Array.from(LDFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '위락시설') {
+                const AFArea = parseFloat(document.getElementById('AFArea').value);
+                const AFgroundFloors = parseInt(document.getElementById('AFgroundFloors').value, 10);
+                const AFbasementFloorsInput = document.getElementById('AFbasementFloors').value;
+                const AFbasementAreaSumInput = document.getElementById('AFbasementAreaSum').value;
+
+                const AFbasementFloors = AFbasementFloorsInput ==='' ? null : parseInt(AFbasementFloorsInput, 10);
+                const AFbasementAreaSum = AFbasementAreaSumInput ==='' ? null : parseFloat(AFbasementAreaSumInput);
+
+                if(AFArea === null || AFgroundFloors === null || AFbasementFloors === null || AFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const AFacilities = new Set ();
+                if (AFArea >= 33) AFacilities.add('소화기구');
+                if (AFArea >= 1500) AFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>(1)지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>(2)옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                        </ol>`;
+                    AFnotesList.appendChild(newNote);
+                }
+                if (AFgroundFloors >= 6) AFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    AFnotesList.appendChild(newNote);
+                }
+                if (AFArea >= 400) AFacilities.add('비상경보설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치`;
+                    AFnotesList.appendChild(newNote);
+                }
+                if (AFgroundFloors >= 6 || AFArea >= 600) AFacilities.add('자동화재탐지설비(모든 층)');
+                if (AFgroundFloors >= 6 || AFArea >= 600) AFacilities.add('시각경보기(모든 층)');
+                if (AFArea >= 3500 || AFgroundFloors >= 11 || AFbasementFloors >= 3) AFacilities.add('비상방송설비(모든 층)');
+                if (AFgroundFloors >= 3) AFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                AFacilities.add('유도등(춤을 출 수 있는 무대가 설치된 카바레, 나이트클럽 또는 비슷한 영업시설은 객석유도등 설치)');
+                if (AFgroundFloors + AFbasementFloors >= 5 && AFArea >= 3000) AFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    AFnotesList.appendChild(newNote);
+                }
+                if (AFArea >= 5000) AFacilities.add('상수도소화용수설비');
+                if (AFgroundFloors >= 5 && AFArea >= 6000) AFacilities.add('연결송수관설비(모든 층)');
+                else if (AFgroundFloors + AFbasementFloors >= 7) AFacilities.add('연결송수관설비(모든 층)');
+                else if (AFbasementFloors >= 3 && AFbasementAreaSum >= 1000) AFacilities.add('연결송수관설비(모든 층)');
+                if (AFbasementAreaSum >= 150) AFacilities.add('연결살수설비(모든 층)');
+                if (AFgroundFloors >= 11) AFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (AFbasementFloors >= 3 && AFbasementAreaSum >= 1000) AFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (AFbasementAreaSum >= 3000) AFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (AFbasementFloors >= 3 && AFbasementAreaSum >= 1000) AFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (AFgroundFloors >= 30) AFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+            
+                resultList.innerHTML = Array.from(AFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '공장') {
+                const FArea = parseFloat(document.getElementById('FArea').value);
+                const FgroundFloors = parseInt(document.getElementById('FgroundFloors').value, 10);
+                const FbasementFloorsInput = document.getElementById('FbasementFloors').value;
+                const FbasementAreaSumInput = document.getElementById('FbasementAreaSum').value;
+
+                const FbasementFloors = FbasementFloorsInput ==='' ? null : parseInt(FbasementFloorsInput, 10);
+                const FbasementAreaSum = FbasementAreaSumInput ==='' ? null : parseFloat(FbasementAreaSumInput);
+
+                if(FArea === null || FgroundFloors === null || FbasementFloors === null || FbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const FFacilities = new Set ();
+                if (FArea >= 33) FFacilities.add('소화기구');
+                if (FArea >= 1500) FFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분&#10; 5) 1) 및 2)에 해당하지 않는 공장 또는 창고시설로서 「화재의 예방 및 안전관리에 관한 법률 시행령」 별표 2에서 정하는 수량의 750배 이상의 특수가연물을 저장ㆍ취급하는 것">[참조]</span> 
+                                        <ol>
+                                            <li>지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                            <li>지정수량 750배 이상 특수가연물을 저장·취급하는 공장</li>
+                                        </ol>`;
+                    FnotesList.appendChild(newNote);
+                }
+                if (FgroundFloors >= 6) FFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 9) 공장 또는 창고시설로서 다음의 어느 하나에 해당하는 시설&#10;  가) 「화재의 예방 및 안전관리에 관한 법률 시행령」 별표 2에서 정하는수량의 1천 배 이상의 특수가연물을 저장ㆍ취급하는 시설&#10;  나) 「원자력안전법 시행령」 제2조제1호에 따른 중ㆍ저준위방사성폐기물(이하 “중ㆍ저준위방사성폐기물”이라 한다)의 저장시설 중 소화수를 수집ㆍ처리하는 설비가 있는 저장시설&#10; 10) 지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 공장 또는 창고시설로서 다음의 어느 하나에 해당하는 것&#10;  다) 공장 또는 창고시설 중 7)에 해당하지 않는 것으로서 지하층ㆍ무창층 또는 층수가 4층 이상인 것 중 바닥면적이 500㎡ 이상인 경우에는 모든 층&#10;  마) 공장 또는 창고시설 중 9)가)에 해당하지 않는 것으로서 「화재의 예방및 안전관리에 관한 법률 시행령」 별표 2에서 정하는 수량의 500배 이상의 특수가연물을 저장ㆍ취급하는 시설&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>지정수량 1000배 이상의 특수가연물을 저장·취급하는 시설(*지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 시설은 500배 이상)</li>
+                                            <li>중·저준위방사성폐기물의 저장시설 중 소화수를 수집·처리하는 설비가 있는 저장시설</li>
+                                            <li>지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치</li>
+                                            <li>지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 공장 중 지하층·무창층·4층이상인 층이 바닥면적이 500㎡ 이상인 경우 모든 층에 설치</li>
+                                        </ol>`;
+                    FnotesList.appendChild(newNote);
+                }
+                if (FArea >= 400) FFacilities.add('비상경보설비(모래·석재 등 불연재료 공장은 제외)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층&#10; 4) 50명 이상의 근로자가 작업하는 옥내 작업장">[참조]</span>
+                                        <ol>
+                                            <li>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치</li>
+                                            <li>50명 이상의 근로자가 작업하는 옥내 작업장</li>
+                                        </ol>`;
+                    FnotesList.appendChild(newNote);
+                }
+                if (FgroundFloors >= 6 || FArea >= 1000) FFacilities.add('자동화재탐지설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `자동화재탐지설비:<span class="note-tooltip"
+                                        title="2-다: 자동화재탐지설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 13) 4)에 해당하지 않는 공장 및 창고시설로서 「화재의 예방 및 안전관리에관한 법률 시행령」 별표 2에서 정하는 수량의 500배 이상의 특수가연물을저장ㆍ취급하는 것">[참조]</span>지정수량 500배 이상 특수가연물을 저장·취급하는 시설`;
+                    FnotesList.appendChild(newNote);
+                }
+                if (FArea >= 3500 || FgroundFloors >= 11 || FbasementFloors >= 3) FFacilities.add('비상방송설비(모든 층)');
+                if (FgroundFloors >= 3) FFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                FFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (FgroundFloors + FbasementFloors >= 5 && FArea >= 3000) FFacilities.add('비상조명등');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    FnotesList.appendChild(newNote);
+                }
+                if (FArea >= 5000) FFacilities.add('상수도소화용수설비');
+                if (FgroundFloors >= 5 && FArea >= 6000) FFacilities.add('연결송수관설비(모든 층)');
+                else if (FgroundFloors + FbasementFloors >= 7) FFacilities.add('연결송수관설비(모든 층)');
+                else if (FbasementFloors >= 3 && FbasementAreaSum >= 1000) FFacilities.add('연결송수관설비(모든 층)');
+                if (FbasementAreaSum >= 150) FFacilities.add('연결살수설비(모든 층)');
+                if (FgroundFloors >= 11) FFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (FbasementFloors >= 3 && FbasementAreaSum >= 1000) FFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (FbasementAreaSum >= 3000) FFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (FbasementFloors >= 3 && FbasementAreaSum >= 1000) FFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (FgroundFloors >= 30) FFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+            
+                resultList.innerHTML = Array.from(FFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '창고시설') {
+                const WArea = parseFloat(document.getElementById('WArea').value);
+                const WgroundFloors = parseInt(document.getElementById('WgroundFloors').value, 10);
+                const WbasementFloorsInput = document.getElementById('WbasementFloors').value;
+                const WbasementAreaSumInput = document.getElementById('WbasementAreaSum').value;
+
+                const WbasementFloors = WbasementFloorsInput ==='' ? null : parseInt(WbasementFloorsInput, 10);
+                const WbasementAreaSum = WbasementAreaSumInput ==='' ? null : parseFloat(WbasementAreaSumInput);
+
+                if(WArea === null || WgroundFloors === null || WbasementFloors === null || WbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const WFacilities = new Set ();
+                if (WArea >= 33) WFacilities.add('소화기구');
+                if (WArea >= 1500) WFacilities.add('옥내소화전설비');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 2) 1)에 해당하지 않는 근린생활시설, 판매시설, 운수시설, 의료시설, 노유자시설, 업무시설, 숙박시설, 위락시설, 공장, 창고시설, 항공기 및 자동차 관련시설, 교정 및 군사시설 중 국방ㆍ군사시설, 방송통신시설, 발전시설, 장례시설또는 복합건축물로서 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층으로서 바닥면적이 300㎡ 이상인 층이 있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 300㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>지하층·무창층·4층이상인 층이 바닥면적이 300㎡ 이상인 층이 있는 경우 모든 층에 설치.</li>
+                                            <li>옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치</li>
+                                            <li>지정수량 750배 이상 특수가연물을 저장·취급하는 창고</li>
+                                        </ol>`;
+                    WnotesList.appendChild(newNote);
+                }
+                if (WgroundFloors >= 6) WFacilities.add('스프링클러설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 6) 창고시설(물류터미널은 제외한다)로서 바닥면적의 합계가 5천㎡ 이상인 경우에는 모든 층&#10; 8) 랙식 창고(rack warehouse): 랙(물건을 수납할 수 있는 선반이나 이와 비슷한 것을 말한다. 이하 같다)을 갖춘 것으로서 천장 또는 반자(반자가 없는경우에는 지붕의 옥내에 면하는 부분을 말한다)의 높이가 10m를 초과하고, 랙이 설치된 층의 바닥면적의 합계가 1천5백㎡ 이상인 경우에는 모든 층&#10; 9) 공장 또는 창고시설로서 다음의 어느 하나에 해당하는 시설&#10;  가) 「화재의 예방 및 안전관리에 관한 법률 시행령」 별표 2에서 정하는수량의 1천 배 이상의 특수가연물을 저장ㆍ취급하는 시설&#10;  나) 「원자력안전법 시행령」 제2조제1호에 따른 중ㆍ저준위방사성폐기물(이하 “중ㆍ저준위방사성폐기물”이라 한다)의 저장시설 중 소화수를 수집ㆍ처리하는 설비가 있는 저장시설&#10; 10) 지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 공장 또는 창고시설로서 다음의 어느 하나에 해당하는 것&#10;  가) 창고시설(물류터미널로 한정한다) 중 4)에 해당하지 않는 것으로서 바닥면적의 합계가 2천5백㎡ 이상이거나 수용인원이 250명 이상인 경우에는모든 층&#10;  나) 창고시설(물류터미널은 제외한다) 중 6)에 해당하지 않는 것으로서 바닥면적의 합계가 2천5백㎡ 이상인 경우에는 모든 층&#10;  다) 공장 또는 창고시설 중 7)에 해당하지 않는 것으로서 지하층ㆍ무창층 또는 층수가 4층 이상인 것 중 바닥면적이 500㎡ 이상인 경우에는 모든 층&#10;  라) 랙식 창고 중 8)에 해당하지 않는 것으로서 바닥면적의 합계가 750㎡이상인 경우에는 모든 층&#10;  마) 공장 또는 창고시설 중 9)가)에 해당하지 않는 것으로서 「화재의 예방및 안전관리에 관한 법률 시행령」 별표 2에서 정하는 수량의 500배 이상의 특수가연물을 저장ㆍ취급하는 시설&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>
+                                        <ol>
+                                            <li>바닥면적의 합계가 5000㎡ 이상이거나 수용인원 500명 이상인 물류터미널(*지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 시설은 2500㎡ 이상이거나 수용인원 250명 이상)</li>
+                                            <li>지정수량 1000배 이상의 특수가연물을 저장·취급하는 시설(*지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 시설은 500배 이상)</li>
+                                            <li>중·저준위방사성폐기물의 저장시설 중 소화수를 수집·처리하는 설비가 있는 저장시설</li>
+                                            <li>바닥면적의 합계가 5000㎡ 이상인 물류터미널이 아닌 창고시설(*지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 시설은 2500㎡ 이상)</li>
+                                            <li>지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치(*지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 층인 경우 500㎡ 이상)</li>
+                                            <li>높이가 10m를 초과하고 바닥면적의 합계가 1500㎡ 이상인 랙식 창고(*지붕 또는 외벽이 불연재료가 아니거나 내화구조가 아닌 랙식 창고는 750㎡ 이상)</li>
+                                        </ol>`;
+                    WnotesList.appendChild(newNote);
+                }
+                if (WArea >= 400) WFacilities.add('비상경보설비(모래·석재 등 불연재료 창고는 제외)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층&#10; 4) 50명 이상의 근로자가 작업하는 옥내 작업장">[참조]</span>
+                                        <ol>
+                                            <li>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치</li>
+                                            <li>50명 이상의 근로자가 작업하는 옥내 작업장</li>
+                                        </ol>`;
+                    WnotesList.appendChild(newNote);
+                }
+                if (WgroundFloors >= 6 || WArea >= 1000) WFacilities.add('자동화재탐지설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `자동화재탐지설비:<span class="note-tooltip"
+                                        title="2-다: 자동화재탐지설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에해당하는 것으로 한다.&#10; 13) 4)에 해당하지 않는 공장 및 창고시설로서 「화재의 예방 및 안전관리에관한 법률 시행령」 별표 2에서 정하는 수량의 500배 이상의 특수가연물을저장ㆍ취급하는 것">[참조]</span>지정수량 500배 이상 특수가연물을 저장·취급하는 시설`;
+                    WnotesList.appendChild(newNote);
+                }
+                if (WgroundFloors >= 6 || WArea >= 1000) {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `시각경보기:<span class="note-tooltip"
+                                        title="2-라: 시각경보기를 설치해야 하는 특정소방대상물은 다목에 따라 자동화재탐지설비를 설치해야 하는 특정소방대상물 중 다음의 어느 하나에 해당하는 것으로한다.&#10; 2) 운동시설, 업무시설, 숙박시설, 위락시설, 창고시설 중 물류터미널, 발전시설및 장례시설">[참조]</span>창고시설 중 물류터미널`;
+                    WnotesList.appendChild(newNote);
+                }
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `시각경보기:<span class="note-tooltip"
+                                        title="2-라: 시각경보기를 설치해야 하는 특정소방대상물은 다목에 따라 자동화재탐지설비를 설치해야 하는 특정소방대상물 중 다음의 어느 하나에 해당하는 것으로한다.&#10; 2) 운동시설, 업무시설, 숙박시설, 위락시설, 창고시설 중 물류터미널, 발전시설및 장례시설">[참조]</span>지정수량의 500배 이상의 특수가연물을 저장·취급하는 창고시설 중 물류터미널`;
+                    WnotesList.appendChild(newNote);
+                }
+                if (WArea >= 3500 || WgroundFloors >= 11 || WbasementFloors >= 3) WFacilities.add('비상방송설비(모든 층)');
+                if (WgroundFloors >= 3) WFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치)');
+                WFacilities.add('유도등(+지하층 및 무창층에 피난유도선 설치)');
+                if (WgroundFloors + WbasementFloors >= 5 && WArea >= 3000) {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 1) 지하층을 포함하는 층수가 5층 이상인 건축물로서 연면적 3천㎡ 이상인경우에는 모든 층">[참조]</span>지하층 포함 5층 이상이고 연면적 3000㎡ 이상인 물류터미널 및 집배송시설`;
+                    WnotesList.appendChild(newNote);
+                }
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>물류터미널 및 집배송시설 중 지하층·무창층·4층이상인 층이 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    WnotesList.appendChild(newNote);
+                }
+                if (WArea >= 5000) WFacilities.add('상수도소화용수설비');
+                if (WgroundFloors >= 5 && WArea >= 6000) WFacilities.add('연결송수관설비(모든 층)');
+                else if (WgroundFloors + WbasementFloors >= 7) WFacilities.add('연결송수관설비(모든 층)');
+                else if (WbasementFloors >= 3 && WbasementAreaSum >= 1000) WFacilities.add('연결송수관설비(모든 층)');
+                if (WbasementAreaSum >= 150) WFacilities.add('연결살수설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `연결살수설비:<span class="note-tooltip"
+                                        title="3-다: 연결살수설비를 설치해야 하는 특정소방대상물(지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 1) 판매시설, 운수시설, 창고시설 중 물류터미널로서 해당 용도로 사용되는 부분의바닥면적의 합계가 1천㎡ 이상인 경우에는 해당 시설">[참조]</span>바닥면적의 합계가 1000㎡ 이상인 물류터미널`;
+                    WnotesList.appendChild(newNote);
+                }
+                if (WgroundFloors >= 11) WFacilities.add('비상콘센트설비(11층 이상의 층)');
+                if (WbasementFloors >= 3 && WbasementAreaSum >= 1000) WFacilities.add('비상콘센트설비(지하 모든 층)');
+                if (WbasementAreaSum >= 3000) WFacilities.add('무선통신보조설비(지하 모든 층)');
+                else if (WbasementFloors >= 3 && WbasementAreaSum >= 1000) WFacilities.add('무선통신보조설비(지하 모든 층)');
+                if (WgroundFloors >= 30) WFacilities.add('무선통신보조설비(16층 이상 모든 층)');
+            
+                resultList.innerHTML = Array.from(WFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '위험물 저장 및 처리 시설') {
+                const HFArea = parseFloat(document.getElementById('HFArea').value);
+                const HFgroundFloors = parseInt(document.getElementById('HFgroundFloors').value, 10);
+                const HFbasementFloorsInput = document.getElementById('HFbasementFloors').value;
+                const HFbasementAreaSumInput = document.getElementById('HFbasementAreaSum').value;
+
+                const HFbasementFloors = HFbasementFloorsInput ==='' ? null : parseInt(HFbasementFloorsInput, 10);
+                const HFbasementAreaSum = HFbasementAreaSumInput ==='' ? null : parseFloat(HFbasementAreaSumInput);
+
+                if(HFArea === null || HFgroundFloors === null || HFbasementFloors === null || HFbasementAreaSum === null) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                const HFacilities = new Set ();
+                if (HFArea >= 33) HFacilities.add('소화기구');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `소화기구:<span class="note-tooltip"
+                                        title="1-가: 가. 화재안전기준에 따라 소화기구를 설치해야 하는 특정소방대상물은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 1)에 해당하지 않는 시설로서 가스시설, 발전시설 중 전기저장시설 및 국가유산">[참조]</span>가스시설`;
+                    HFnotesList.appendChild(newNote);
+                }
+                if (HFArea >= 3000) HFacilities.add('옥내소화전설비(*가스시설 제외)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `옥내소화전설비:<span class="note-tooltip"
+                                        title="1-다: 옥내소화전설비를 설치해야 하는 특정소방대상물은 다음의 어느 하나에 해당하는 것으로 한다. 다만, 위험물 저장 및 처리 시설 중 가스시설, 지하구 및업무시설 중 무인변전소(방재실 등에서 스프링클러설비 또는 물분무등소화설비를원격으로 조정할 수 있는 무인변전소로 한정한다)는 제외한다.&#10; 1) 다음의 어느 하나에 해당하는 경우에는 모든 층&#10;  나) 지하층ㆍ무창층(축사는 제외한다)으로서 바닥면적이 600㎡ 이상인 층이있는 것&#10;  다) 4층 이상인 층 중에서 바닥면적이 600㎡ 이상인 층이 있는 것&#10; 3) 건축물의 옥상에 설치된 차고ㆍ주차장으로서 사용되는 면적이 200㎡ 이상인경우 해당 부분">[참조]</span> 
+                                        <ol>
+                                            <li>지하층·무창층·4층이상인 층이 바닥면적이 600㎡ 이상인 층이 있는 경우 모든 층에 설치(가스시설 제외).</li>
+                                            <li>옥상 차고 또는 주차장용도 200㎡ 이상인 것 해당부분에 설치(가스시설 제외).</li>
+                                        </ol>`;
+                    HFnotesList.appendChild(newNote);
+                }
+                if (HFgroundFloors >= 6) HFacilities.add('스프링클러설비(모든 층, *가스시설 제외)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `스프링클러설비:<span class="note-tooltip"
+                                        title="1-라: 스프링클러설비를 설치해야 하는 특정소방대상물(위험물 저장 및 처리 시설중 가스시설 및 지하구는 제외한다)은 다음의 어느 하나에 해당하는 것으로한다.&#10; 7) 특정소방대상물의 지하층ㆍ무창층(축사는 제외한다) 또는 층수가 4층 이상인층으로서 바닥면적이 1천㎡ 이상인 층이 있는 경우에는 해당 층">[참조]</span>지하층·무창층·4층이상인 층이 바닥면적이 1000㎡ 이상인 층이 있는 경우 해당 층에 설치(가스시설 제외)`;
+                    HFnotesList.appendChild(newNote);
+                }
+                if (HFArea >= 400) HFacilities.add('비상경보설비(가스시설 제외)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상경보설비:<span class="note-tooltip"
+                                        title="2-나: 비상경보설비를 설치해야 하는 특정소방대상물(모래ㆍ석재 등 불연재료 공장및 창고시설, 위험물 저장 및 처리 시설 중 가스시설, 사람이 거주하지 않거나벽이 없는 축사 등 동물 및 식물 관련 시설 및 지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 2) 지하층 또는 무창층의 바닥면적이 150㎡(공연장의 경우 100㎡) 이상인 것은모든 층">[참조]</span>지하층·무창층 바닥면적이 150㎡ 이상인 경우 모든 층에 설치(가스시설 제외)`;
+                    HFnotesList.appendChild(newNote);
+                }
+                if (HFgroundFloors >= 6 || HFArea >= 1000) HFacilities.add('자동화재탐지설비(모든 층)');
+                if (HFArea >= 3500 || HFgroundFloors >= 11 || HFbasementFloors >= 3) HFacilities.add('비상방송설비(모든 층, 가스시설 제외)');
+                if (HFgroundFloors >= 3) HFacilities.add('피난기구(피난층 제외 지상 3층 ~ 지상10층에 설치, 가스시설 제외)');
+                HFacilities.add('유도등(피난구유도등, 통로유도등 및 유도표지)');
+                if (HFgroundFloors + HFbasementFloors >= 5 && HFArea >= 3000) HFacilities.add('비상조명등(가스시설 제외)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `비상조명등:<span class="note-tooltip"
+                                        title="3-라: 비상조명등을 설치해야 하는 특정소방대상물(창고시설 중 창고 및 하역장, 위험물 저장 및 처리 시설 중 가스시설 및 사람이 거주하지 않거나 벽이 없는축사 등 동물 및 식물 관련 시설은 제외한다)은 다음의 어느 하나에 해당하는것으로 한다&#10; 2) 1)에 해당하지 않는 특정소방대상물로서 그 지하층 또는 무창층의 바닥면적이 450㎡ 이상인 경우에는 해당 층">[참조]</span>지하층·무창층 바닥면적이 450㎡ 이상인 층이 있는 경우 해당 층에 설치`;
+                    HFnotesList.appendChild(newNote);
+                }
+                if (HFArea >= 5000) HFacilities.add('상수도소화용수설비(가스시설 제외)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `상수도소화용수설비:<span class="note-tooltip"
+                                        title="4: 상수도소화용수설비를 설치해야 하는 특정소방대상물은 다음 각 목의 어느 하나에 해당하는 것으로 한다. 다만, 상수도소화용수설비를 설치해야 하는 특정소방대상물의 대지 경계선으로부터 180m 이내에 지름 75㎜ 이상인 상수도용 배수관이설치되지 않은 지역의 경우에는 화재안전기준에 따른 소화수조 또는 저수조를설치해야 한다.&#10; 나. 가스시설로서 지상에 노출된 탱크의 저장용량의 합계가 100톤 이상인 것">[참조]</span>지상에 노출된 탱크의 저장용량 합계가 100톤 이상인 가스시설`;
+                    HFnotesList.appendChild(newNote);
+                }
+                if (HFgroundFloors >= 5 && HFArea >= 6000) HFacilities.add('연결송수관설비(모든 층, 가스시설 제외)');
+                else if (HFgroundFloors + HFbasementFloors >= 7) HFacilities.add('연결송수관설비(모든 층, 가스시설 제외)');
+                else if (HFbasementFloors >= 3 && HFbasementAreaSum >= 1000) HFacilities.add('연결송수관설비(모든 층, 가스시설 제외)');
+                if (HFbasementAreaSum >= 150) HFacilities.add('연결살수설비(모든 층)');
+                else {
+                    const newNote = document.createElement('li');
+                    newNote.innerHTML = `연결살수설비:<span class="note-tooltip"
+                                        title="3-다: 연결살수설비를 설치해야 하는 특정소방대상물(지하구는 제외한다)은 다음의어느 하나에 해당하는 것으로 한다.&#10; 3) 가스시설 중 지상에 노출된 탱크의 용량이 30톤 이상인 탱크시설">[참조]</span>가스시설 중 지상에 노출된 탱크의 용량이 30톤 이상인 탱크시설`;
+                    HFnotesList.appendChild(newNote);
+                }
+                if (HFgroundFloors >= 11) HFacilities.add('비상콘센트설비(11층 이상의 층, 가스시설 제외)');
+                if (HFbasementFloors >= 3 && HFbasementAreaSum >= 1000) HFacilities.add('비상콘센트설비(지하 모든 층, 가스시설 제외)');
+                if (HFbasementAreaSum >= 3000) HFacilities.add('무선통신보조설비(지하 모든 층, 가스시설 제외)');
+                else if (HFbasementFloors >= 3 && HFbasementAreaSum >= 1000) HFacilities.add('무선통신보조설비(지하 모든 층, 가스시설 제외)');
+                if (HFgroundFloors >= 30) HFacilities.add('무선통신보조설비(16층 이상 모든 층, 가스시설 제외)');
+            
+                resultList.innerHTML = Array.from(HFacilities).map(facility => `<li>${facility}</li>`).join('');
+            }
+
+            else if (buildingType === '터널') {
+                const tunnelLength = document.getElementById('tunnelLength').value;
+                const isSpecialTunnel = document.getElementById('isSpecialTunnel').value;
+
+                if (!tunnelLength || !isSpecialTunnel) {
+                    alert('모든 입력값을 입력해주세요.');
+                    return;
+                }
+
+                if (isSpecialTunnel === 'yes') {
+                    resultList.innerHTML = `
+                        <li>옥내소화전설비</li>
+                        <li>물분무등소화설비</li>
+                        <li>제연설비</li>`;
+                } else {
+                    switch (tunnelLength) {
+                        case 'short':
+                            resultList.innerHTML = `<li>소화기구</li>`;
+                            break;
+                        case 'medium':
+                            resultList.innerHTML = `
+                                <li>소화기구</li>
+                                <li>비상경보설비</li>
+                                <li>비상조명등</li>`;
+                            break;
+                        case 'long':
+                            resultList.innerHTML = `
+                                <li>소화기구</li>
+                                <li>옥내소화전설비</li>
+                                <li>연결송수관설비</li>`;
+                            break;
+                    }
+                }
+            }
+
+            resultContainer.style.display = 'block';
+        });
+    </script>
+</body>
+
+</html>
